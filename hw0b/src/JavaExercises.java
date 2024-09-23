@@ -24,7 +24,7 @@ public class JavaExercises {
         // TODO: Fill in this function.
         if (customer.equals("Ergun")) {
             String[] order = new String[4];
-            order[0] = "bryti";
+            order[0] = "beyti";
             order[1] = "pizza";
             order[2] = "hamburger";
             order[3] = "tea";
@@ -77,7 +77,15 @@ public class JavaExercises {
 
     private static List<Integer> hailstoneHelper(int x, List<Integer> list) {
         // TODO: Fill in this function.
-        return null;
-    }
+        list.add(x);
+        if (x == 1) {
+            return list;
+        }
 
+        if (x % 2 == 0) {
+            return hailstoneHelper(x / 2, list);
+        } else {
+            return hailstoneHelper(x * 3 + 1, list);
+        }
+    }
 }
