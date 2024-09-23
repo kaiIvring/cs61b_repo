@@ -22,14 +22,45 @@ public class JavaExercises {
      *  In any other case, return an empty String[] of size 3. */
     public static String[] takeOrder(String customer) {
         // TODO: Fill in this function.
-        return null;
+        if (customer.equals("Ergun")) {
+            String[] order = new String[4];
+            order[0] = "bryti";
+            order[1] = "pizza";
+            order[2] = "hamburger";
+            order[3] = "tea";
+            return order;
+        } else if (customer.equals("Erik")) {
+            String[] order = new String[4];
+            order[0] = "sushi";
+            order[1] = "pasta";
+            order[2] = "avocado";
+            order[3] = "coffee";
+            return order;
+        } else {
+            String[] order = new String[3];
+            return order;
+        }
     }
 
     /** Returns the positive difference between the maximum element and minimum element of the given array.
      *  Assumes array is nonempty. */
     public static int findMinMax(int[] array) {
         // TODO: Fill in this function.
-        return 0;
+        int max = array[0];
+        int min = array[0];
+        int diff = 0;
+        for (int i = 1; i < array.length; i++) {
+            if(max < array[i]) {
+                max = array[i];
+            }
+        }
+        for (int k = 1; k < array.length; k++) {
+            if(min > array[k]) {
+                min = array[k];
+            }
+        }
+        diff = max - min;
+        return diff;
     }
 
     /**
