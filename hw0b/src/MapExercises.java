@@ -47,7 +47,7 @@ public class MapExercises {
 //            countMap.put(words.get(i), cnt);
 //        }
 //        return countMap;
-        
+
         //improved solution
         Map<String, Integer> countMap = new HashMap<>();
         for (String str : words) {
