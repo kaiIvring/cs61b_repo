@@ -108,7 +108,7 @@ public class Board {
     public void resetMerged() {
         for (int x = 0; x < size(); x += 1) {
             for (int y = 0; y < size(); y += 1) {
-                if (_values[x][y] != null){
+                if (_values[x][y] != null) {
                     _values[x][y].setMerged(false);
                 }
             }
