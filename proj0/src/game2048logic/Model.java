@@ -106,7 +106,7 @@ public class Model {
         for (int i = 0; i < board.size(); i++) {
             for (int j = 0; j < board.size(); j++) {
                 if (board.tile(i, j) != null) {
-                    if ((board.tile(i, j).value()) == this.MAX_PIECE) {
+                    if ((board.tile(i, j).value()) == MAX_PIECE) {
                         return true;
                     }
                 }
@@ -173,6 +173,23 @@ public class Model {
         Tile currTile = board.tile(x, y);
         int myValue = currTile.value();
         int targetY = y;
+        if (currTile == null || y == board.size() - 1) {
+            return;
+        }
+        for (int i = y + 1; i < board.size(); i++) {
+           Tile aboveTile = board.tile(x, i);
+           if (aboveTile == null) {
+               targetY = i;
+           } else if (aboveTile.value() == currTile.value()) {
+               targetY = i;
+               break;
+           } else {
+               break;
+           }
+        }
+        if (targetY != y) {
+            board.move(x, targetY, currTile);
+        }
 
         // TODO: Tasks 5, 6, and 10. Fill in this function.
     }
