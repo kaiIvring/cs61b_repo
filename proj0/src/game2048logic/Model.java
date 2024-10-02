@@ -84,17 +84,15 @@ public class Model {
      *  Empty spaces are stored as null.
      * */
     public boolean emptySpaceExists() {
-        // TODO: Task 2. Fill in this function.
-        boolean flag = false;
+        // TODO: Task 1. Fill in this function.
         for (int i = 0; i < board.size(); i++) {
             for (int j = 0; j < board.size(); j++) {
                 if (board.tile(i,j) == null) {
-                    flag = true;
-                    return flag;
+                    return true;
                 }
             }
         }
-        return flag;
+        return false;
     }
 
     /**
@@ -103,20 +101,18 @@ public class Model {
      * given a Tile object t, we get its value with t.value().
      */
     public boolean maxTileExists() {
-        // TODO: Task 3. Fill in this function.
-        boolean flag = false;
+        // TODO: Task 2. Fill in this function.
         int count = 0;
         for (int i = 0; i < board.size(); i++) {
             for (int j = 0; j < board.size(); j++) {
                 if (board.tile(i, j) != null) {
                     if ((board.tile(i, j).value()) == this.MAX_PIECE) {
-                        flag = true;
-                        return flag;
+                        return true;
                     }
                 }
             }
         }
-        return flag;
+        return false;
     }
 
     /**
@@ -126,7 +122,36 @@ public class Model {
      * 2. There are two adjacent tiles with the same value.
      */
     public boolean atLeastOneMoveExists() {
-        // TODO: Fill in this function.
+        // TODO: Task 3. Fill in this function.
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < board.size(); j++) {
+                if (board.tile(i, j) == null) {
+                    return true;
+                }
+            }
+        }
+
+        for (int m = 0; m < board.size(); m++) {
+            for (int n = 0; n < board.size(); n++) {
+                if (!(m == 3 && n == 3)) {
+                    if (m == 3) {
+                        if ((board.tile(m, n)).value() == (board.tile(m, n + 1)).value()) {
+                            return true;
+                        }
+                    } else if (n == 3) {
+                        if ((board.tile(m, n)).value() == (board.tile(m + 1, n)).value()) {
+                            return true;
+                        }
+                    } else {
+                        if ((board.tile(m, n)).value() == (board.tile(m + 1, n)).value()) {
+                            return true;
+                        } else if ((board.tile(m, n)).value() == (board.tile(m, n + 1)).value()) {
+                            return true;
+                        }
+                    }
+                }
+                }
+        }
         return false;
     }
 
