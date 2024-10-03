@@ -180,7 +180,7 @@ public class Model {
            Tile aboveTile = board.tile(x, i);
            if (aboveTile == null) {
                targetY = i;
-           } else if (aboveTile.value() == currTile.value()) {
+           } else if (aboveTile.value() == currTile.value() && !(aboveTile.wasMerged()) && !(currTile.wasMerged())) {
                targetY = i;
                break;
            } else {
@@ -201,6 +201,7 @@ public class Model {
      * */
     public void tiltColumn(int x) {
         // TODO: Task 7. Fill in this function.
+        
     }
 
     public void tilt(Side side) {
