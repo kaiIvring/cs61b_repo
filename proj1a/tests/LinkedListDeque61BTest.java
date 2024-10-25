@@ -1,5 +1,3 @@
-import jh61b.utils.Reflection;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -57,4 +55,36 @@ public class LinkedListDeque61BTest {
      }
 
     // Below, you'll write your own tests for LinkedListDeque61B.
+    @Test
+    public void isEmptyTestBasic() {
+         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+         assertThat(lld1.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void isEmptyFalseTest() {
+         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+         lld1.addFirst(1);
+         assertThat(lld1.isEmpty()).isFalse();
+    }
+
+    @Test
+    public void sizeTestBasic() {
+         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+         lld1.addFirst(1);
+         lld1.addFirst(2);
+         lld1.addLast(4);
+         int expectedSize = 3;
+         assertThat(lld1.size()).isEqualTo(expectedSize);
+    }
+
+    @Test
+    public void sizeEmptyTest() {
+         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+         int expectedSize = 0;
+         assertThat(lld1.size()).isEqualTo(expectedSize);
+    }
+
+    @Test
+    public void 
 }
