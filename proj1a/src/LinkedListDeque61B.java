@@ -78,11 +78,29 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
 
     @Override
     public T get(int index) {
-        return null;
+        if(index < 0 || index > size - 1) {
+            return null;
+        }
+        Node currNode = sentinel.next;
+        while (index != 0) {
+            currNode = currNode.next;
+            index -= 1;
+        }
+        return currNode.item;
     }
 
     @Override
     public T getRecursive(int index) {
-        return null;
+        if(index < 0 || index > size - 1) {
+            return null;
+        }
+        Node currNode = sentinel.next;
+        return getRecursiveHelper(index,currNode);
+    }
+    public T getRecursiveHelper(int index, Node currNode) {
+        if (index == 0) {
+            return currNode.item;
+        }
+        return getRecursiveHelper(index - 1, currNode.next);
     }
 }
