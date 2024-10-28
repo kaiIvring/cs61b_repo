@@ -1,5 +1,10 @@
+import edu.princeton.cs.algs4.In;
 import org.apache.hc.core5.annotation.Internal;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
@@ -57,6 +62,40 @@ public class LinkedListDeque61BTest {
 
     // Below, you'll write your own tests for LinkedListDeque61B.
     @Test
+    public void toListEmptyTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        List<Integer> expected = new ArrayList<>();
+        assertThat(lld1.toList()).isEqualTo(expected);
+    }
+
+    @Test
+    public void toListBasicTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addFirst(1);
+        lld1.addFirst(2);
+        lld1.addFirst(3);
+
+        List<Integer> expected = new ArrayList<>();
+        expected.add(3);
+        expected.add(2);
+        expected.add(1);
+
+        assertThat(lld1.toList()).isEqualTo(expected);
+    }
+    
+    @Test
+    public void addFirstAfterRemoveToEmpty() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addFirst(1);
+        lld1.addFirst(2);
+        lld1.removeFirst();
+        lld1.removeFirst();
+        lld1.addFirst(4);
+        lld1.addFirst(3);
+        assertThat(lld1.toList()).containsExactly(3,4).inOrder();
+    }
+
+    @Test
     public void isEmptyTestBasic() {
         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
         assertThat(lld1.isEmpty()).isTrue();
@@ -82,6 +121,31 @@ public class LinkedListDeque61BTest {
     @Test
     public void sizeZeroTest() {
         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        int expectedSize = 0;
+        assertThat(lld1.size()).isEqualTo(expectedSize);
+    }
+
+    @Test
+    public void sizeAfterRemoveToEmpty() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addFirst(1);
+        lld1.addFirst(1);
+        lld1.addFirst(1);
+        lld1.addFirst(1);
+
+        lld1.removeFirst();
+        lld1.removeFirst();
+        lld1.removeFirst();
+        lld1.removeFirst();
+
+        int expectedSize = 0;
+        assertThat(lld1.size()).isEqualTo(expectedSize);
+    }
+
+    @Test
+    public void sizeRemoveFromEmpty() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.removeFirst();
         int expectedSize = 0;
         assertThat(lld1.size()).isEqualTo(expectedSize);
     }
@@ -126,9 +190,56 @@ public class LinkedListDeque61BTest {
     }
 
     @Test
-    public  void getRecursiveNegativeIndexTest() {
+    public void getRecursiveNegativeIndexTest() {
         Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
         lld1.addLast(1);
         assertThat(lld1.getRecursive(-11)).isEqualTo(null);
     }
+
+    @Test
+    public void removeLastBasicTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addLast(1);
+        lld1.addLast(2);
+        lld1.addLast(3);
+        lld1.addLast(7);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(1,2,3).inOrder();
+    }
+
+    @Test
+    public void removeFirstBasicTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addLast(1);
+        lld1.addLast(2);
+        lld1.addLast(3);
+        lld1.addLast(7);
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(2,3,7).inOrder();
+    }
+
+    @Test
+    public void removeLastEmpty() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        assertThat(lld1.removeLast()).isEqualTo(null);
+    }
+
+    @Test
+    public void removeFirstEmpty() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        assertThat(lld1.removeFirst()).isEqualTo(null);
+    }
+
+    @Test
+    public void removeFirstAndLastTest() {
+        Deque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addLast(3);
+        lld1.addFirst(5);
+        lld1.addLast(7);
+        lld1.addFirst(9);
+        lld1.removeLast();
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(5,3).inOrder();
+    }
+
 }
