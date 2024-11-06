@@ -262,6 +262,44 @@ public class ArrayDeque61BTest {
         ad1.removeFirst();
 
         assertThat(ad1.toList()).containsExactly().inOrder();
+        assertThat(ad1.size()).isEqualTo(0);// sizeAfterRemoveToEmptyTest
+    }
+
+    @Test
+    public void removeFirstTriggerResize() {
+        Deque61B<Integer> ad1 = new ArrayDeque61B<>();
+        ad1.addLast(1);
+        ad1.addLast(2);
+        ad1.addLast(3);
+        ad1.addLast(4);
+        ad1.addLast(5);
+        ad1.addLast(6);
+        ad1.addLast(7);
+        ad1.addLast(8);
+        ad1.addLast(9);
+        ad1.removeFirst();
+        ad1.removeFirst();
+        ad1.removeFirst();
+        ad1.removeFirst();
+        ad1.removeFirst();
+        ad1.removeFirst();
+        assertThat(ad1.toList()).containsExactly( 7, 8, 9);
+    }
+
+    @Test
+    public void removeLastToEmptyTest() {
+        Deque61B<Integer> ad1 = new ArrayDeque61B<>();
+        ad1.addLast(1);
+        ad1.addLast(2);
+        ad1.addLast(3);
+        ad1.addLast(4);
+        ad1.removeLast();
+        ad1.removeLast();
+        ad1.removeLast();
+        ad1.removeLast();
+
+        assertThat(ad1.toList()).containsExactly().inOrder();
+
     }
 
     @Test
@@ -280,5 +318,32 @@ public class ArrayDeque61BTest {
         ad1.removeLast();
 
         assertThat(ad1.toList()).containsExactly(1, 2, 3);
+    }
+
+    @Test
+    public void removeLastTriggerResize() {
+        Deque61B<Integer> ad1 = new ArrayDeque61B<>();
+        ad1.addLast(1);
+        ad1.addLast(2);
+        ad1.addLast(3);
+        ad1.addLast(4);
+        ad1.addLast(5);
+        ad1.addLast(6);
+        ad1.addLast(7);
+        ad1.addLast(8);
+        ad1.addLast(9);
+        ad1.removeLast();
+        ad1.removeLast();
+        ad1.removeLast();
+        ad1.removeLast();
+        ad1.removeLast();
+        ad1.removeLast();
+        assertThat(ad1.toList()).containsExactly(1, 2, 3);
+    }
+
+    @Test
+    public void toStringEmptyTest() {
+        Deque61B<Integer> ad1 = new ArrayDeque61B<>();
+        assertThat(ad1.toList()).containsExactly().inOrder();
     }
 }
