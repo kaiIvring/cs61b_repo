@@ -1,16 +1,24 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 2024.11.04
+ * implementation of a ArrayDeque using backing array
+ * a.k.a. circular deque
+ */
+
 public class ArrayDeque61B<T> implements Deque61B<T>{
 
     private T[] items;
     private int size;
+    // pointer, the position before and after the inserted element
     private int nextFirst;
     private int nextLast;
 
     public ArrayDeque61B() {
         items = (T[]) new Object[8];
         size = 0;
+        // set nextFirst and nextLast as you like.
         nextFirst = 3;
         nextLast = 4;
     }
