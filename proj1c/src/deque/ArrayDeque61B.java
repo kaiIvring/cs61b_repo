@@ -1,7 +1,9 @@
 package deque;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class ArrayDeque61B<T> implements Deque61B<T> {
     private T[] items;
@@ -9,6 +11,38 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
     // pointer, the position before and after the inserted element
     private int nextFirst;
     private int nextLast;
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayDequeIterator();
+    }
+
+    private class ArrayDequeIterator implements Iterator<T> {
+        private int currentIndex;
+        private int itemsIterated;
+
+        public ArrayDequeIterator() {
+            // Start from the first element in the deque
+            currentIndex = Math.floorMod(nextFirst + 1, items.length);
+            itemsIterated = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return itemsIterated < size;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+               throw new NoSuchElementException();
+            }
+            T item = items[currentIndex];
+            currentIndex = (currentIndex + 1) % items.length;
+            itemsIterated++;
+            return item;
+        }
+    }
 
     public ArrayDeque61B() {
         items = (T[]) new Object[8];
@@ -127,4 +161,5 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
     public T getRecursive(int index) {
         throw new UnsupportedOperationException("No need to implement getRecursive for proj 1b");
     }
+
 }
