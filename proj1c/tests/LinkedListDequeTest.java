@@ -1,22 +1,22 @@
+import deque.LinkedListDeque61B;
 import org.junit.jupiter.api.Test;
-import deque.ArrayDeque61B;
-import static com.google.common.truth.Truth.assertThat;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayDeque61BTest {
+import static com.google.common.truth.Truth.assertThat;
 
+public class LinkedListDequeTest {
     @Test
-    public void iteratorTestBasic() {
-        ArrayDeque61B<Integer> ad1 = new ArrayDeque61B<>();
-        ad1.addFirst(1);
-        ad1.addFirst(2);
-        ad1.addFirst(3);
+    public void LLDIteratorTestBasic() {
+        LinkedListDeque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        lld1.addFirst(1);
+        lld1.addFirst(2);
+        lld1.addFirst(3);
 
         int[] expected = {3, 2, 1};
         int index = 0;
-        for (int item : ad1) {
+        for (int item : lld1) {
             assertThat(item).isEqualTo(expected[index]);
             index++;
         }
@@ -24,12 +24,11 @@ public class ArrayDeque61BTest {
     }
 
     @Test
-    public void iteratorEmptyDequeTest() {
-        ArrayDeque61B<Integer> ad1 = new ArrayDeque61B<>();
-        Iterator<Integer> iterator = ad1.iterator();
+    public void LLDIteratorEmptyDequeTest() {
+        LinkedListDeque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        Iterator<Integer> iterator = lld1.iterator();
         assertThat(iterator.hasNext()).isFalse();
 
-        // Test if calling next on empty iterator throws exception
         try {
             iterator.next();
             assertThat(false).isTrue();// Should not reach here.
@@ -39,8 +38,9 @@ public class ArrayDeque61BTest {
     }
 
     @Test
-    public void iteratorAfterAddAndRemoveTest() {
-        ArrayDeque61B<Integer> deque = new ArrayDeque61B<>();
+    public void LLDIteratorAfterAddAndRemoveTest() {
+
+        LinkedListDeque61B<Integer> deque = new LinkedListDeque61B<>();
 
         deque.addLast(10);
         deque.addLast(20);
@@ -57,5 +57,4 @@ public class ArrayDeque61BTest {
         }
         assertThat(index).isEqualTo(3); // Ensure we iterated through all elements
     }
-
 }
