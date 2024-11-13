@@ -73,6 +73,7 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
     }
 
     // the code below was in proj1b
+
     public ArrayDeque61B() {
         items = (T[]) new Object[8];
         size = 0;

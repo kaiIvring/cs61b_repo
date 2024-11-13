@@ -118,4 +118,20 @@ public class ArrayDeque61BTest {
 
         assertThat(ad1.toString()).isEqualTo("[banana]");
     }
+
+    @Test
+    public void toStringTriggerResizeTest() {
+        ArrayDeque61B<String> ad1 = new ArrayDeque61B<>();
+        ad1.addLast("apple");
+        ad1.addLast("banana");
+        ad1.addLast("orange");
+        ad1.addLast("Dog");
+        ad1.addLast("Car");
+        ad1.addLast("ArrayDeque");
+        ad1.addLast("pineapple");
+        ad1.addLast("LinkedListDeque");
+        ad1.addLast("List");
+
+        assertThat(ad1.toString()).isEqualTo("[apple, banana, orange, Dog, Car, ArrayDeque, pineapple, LinkedListDeque, List]");
+    }
 }
