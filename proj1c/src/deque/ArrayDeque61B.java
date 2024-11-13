@@ -35,7 +35,7 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
         @Override
         public T next() {
             if (!hasNext()) {
-               throw new NoSuchElementException();
+                throw new NoSuchElementException();
             }
             T item = items[currentIndex];
             currentIndex = (currentIndex + 1) % items.length;
@@ -61,6 +61,15 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        List<String> listOfItems = new ArrayList<>();
+        for (T x : this) {
+            listOfItems.add(x.toString());
+        }
+        return "[" + String.join(", ", listOfItems) + "]";
     }
 
     // the code below was in proj1b
@@ -89,7 +98,7 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
         }
         T[] newList = (T[]) new Object[capacity];
         int start = Math.floorMod(nextFirst + 1, items.length);
-        for (int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             newList[i] = items[(start + i) % items.length];
         }
         items = newList;
@@ -113,7 +122,7 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
             resizeUp(items.length * 2);
         }
         items[nextLast] = x;
-        nextLast = Math.floorMod(nextLast + 1,items.length);
+        nextLast = Math.floorMod(nextLast + 1, items.length);
         size += 1;
     }
 

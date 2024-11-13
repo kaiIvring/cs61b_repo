@@ -32,7 +32,7 @@ public class ArrayDeque61BTest {
         // Test if calling next on empty iterator throws exception
         try {
             iterator.next();
-            assertThat(false).isTrue();// Should not reach here.
+            assertThat(false).isTrue(); // Should not reach here.
         } catch (NoSuchElementException e) {
             assertThat(e).isInstanceOf(NoSuchElementException.class);
         }
@@ -93,5 +93,29 @@ public class ArrayDeque61BTest {
         ArrayDeque61B<Integer> ad2 = new ArrayDeque61B<>();
 
         assertThat(ad1.equals(ad2)).isTrue();
+    }
+
+    @Test
+    public void toStringBasicTest() {
+        ArrayDeque61B<String> ad1 = new ArrayDeque61B<>();
+        ad1.addLast("banana");
+        ad1.addLast("apple");
+        ad1.addLast("orange");
+
+        assertThat(ad1.toString()).isEqualTo("[banana, apple, orange]");
+    }
+
+    @Test
+    public void toStringEmptyDequeTest() {
+        ArrayDeque61B<String> ad1 = new ArrayDeque61B<>();
+        assertThat(ad1.toString()).isEqualTo("[]");
+    }
+
+    @Test
+    public void toStringOneElementTest() {
+        ArrayDeque61B<String> ad1 = new ArrayDeque61B<>();
+        ad1.addLast("banana");
+
+        assertThat(ad1.toString()).isEqualTo("[banana]");
     }
 }

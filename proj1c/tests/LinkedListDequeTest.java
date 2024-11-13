@@ -31,7 +31,7 @@ public class LinkedListDequeTest {
 
         try {
             iterator.next();
-            assertThat(false).isTrue();// Should not reach here.
+            assertThat(false).isTrue(); // Should not reach here.
         } catch (NoSuchElementException e) {
             assertThat(e).isInstanceOf(NoSuchElementException.class);
         }
@@ -96,5 +96,29 @@ public class LinkedListDequeTest {
         LinkedListDeque61B<Integer> lld2 = new LinkedListDeque61B<>();
 
         assertThat(lld1.equals(lld2)).isTrue();
+    }
+
+    @Test
+    public void toStringBasicTest() {
+        LinkedListDeque61B<String> lld1 = new LinkedListDeque61B<>();
+
+        lld1.addLast("java");
+        lld1.addLast("is");
+        lld1.addLast("great");
+
+        assertThat(lld1.toString()).isEqualTo("[java, is, great]");
+    }
+
+    @Test
+    public void toStringEmptyDequeTest() {
+        LinkedListDeque61B<String> lld1 = new LinkedListDeque61B<>();
+        assertThat(lld1.toString()).isEqualTo("[]");
+    }
+
+    @Test
+    public void toStringOneElementTest() {
+        LinkedListDeque61B<String> lld1 = new LinkedListDeque61B<>();
+        lld1.addLast("java");
+        assertThat(lld1.toString()).isEqualTo("[java]");
     }
 }
