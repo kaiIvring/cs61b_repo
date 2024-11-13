@@ -8,6 +8,8 @@ import java.util.List;
  */
 public interface Deque61B<T> extends Iterable<T> {
 
+    /* boolean equal(Object o);
+
     /**
      * Add {@code x} to the front of the deque. Assumes {@code x} is never null.
      *

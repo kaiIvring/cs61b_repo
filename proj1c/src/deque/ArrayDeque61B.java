@@ -44,6 +44,26 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ArrayDeque61B<?> ad2) {
+            if (ad2.size != this.size) {
+                return false;
+            }
+
+            int index = Math.floorMod(nextFirst + 1, this.items.length);
+            for (T x : this) {
+                if (x != ad2.items[index]) {
+                    return false;
+                }
+                index++;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    // the code below was in proj1b
     public ArrayDeque61B() {
         items = (T[]) new Object[8];
         size = 0;

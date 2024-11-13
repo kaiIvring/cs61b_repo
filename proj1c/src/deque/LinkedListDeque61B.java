@@ -38,6 +38,29 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof LinkedListDeque61B<?> lld2) {
+            if (this.size != lld2.size) {
+                return false;
+            }
+
+            Node currNode1 = this.sentinel.next;
+            Node currNode2 = (Node) lld2.sentinel.next;
+
+            while (currNode1 != this.sentinel) {
+                if (!currNode1.item.equals(currNode2.item)) {
+                    return false;
+                }
+                currNode1 = currNode1.next;
+                currNode2 = currNode2.next;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    // the code below was in proj1a
     private class Node {
         public T item;
         public Node next;

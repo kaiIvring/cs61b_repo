@@ -40,21 +40,61 @@ public class LinkedListDequeTest {
     @Test
     public void LLDIteratorAfterAddAndRemoveTest() {
 
-        LinkedListDeque61B<Integer> deque = new LinkedListDeque61B<>();
+        LinkedListDeque61B<Integer> lld1 = new LinkedListDeque61B<>();
 
-        deque.addLast(10);
-        deque.addLast(20);
-        deque.addLast(30);
-        deque.removeFirst();
-        deque.addFirst(5);
+        lld1.addLast(10);
+        lld1.addLast(20);
+        lld1.addLast(30);
+        lld1.removeFirst();
+        lld1.addFirst(5);
 
         int[] expected = {5, 20, 30};
         int index = 0;
 
-        for (int item : deque) {
+        for (int item : lld1) {
             assertThat(item).isEqualTo(expected[index]);
             index++;
         }
         assertThat(index).isEqualTo(3); // Ensure we iterated through all elements
+    }
+
+    @Test
+    public void equalsBasicTest() {
+        LinkedListDeque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        LinkedListDeque61B<Integer> lld2 = new LinkedListDeque61B<>();
+
+        lld1.addFirst(1);
+        lld1.addFirst(2);
+        lld1.addFirst(3);
+
+        lld2.addFirst(1);
+        lld2.addFirst(2);
+        lld2.addFirst(3);
+
+        assertThat(lld1.equals(lld2)).isTrue();
+    }
+
+    @Test
+    public void equalsFalseTest() {
+        LinkedListDeque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        LinkedListDeque61B<Integer> lld2 = new LinkedListDeque61B<>();
+
+        lld1.addFirst(1);
+        lld1.addFirst(2);
+        lld1.addFirst(3);
+
+        lld2.addFirst(9);
+        lld2.addFirst(2);
+        lld2.addFirst(3);
+
+        assertThat(lld1.equals(lld2)).isFalse();
+    }
+
+    @Test
+    public void equalsEmptyDequeTest() {
+        LinkedListDeque61B<Integer> lld1 = new LinkedListDeque61B<>();
+        LinkedListDeque61B<Integer> lld2 = new LinkedListDeque61B<>();
+
+        assertThat(lld1.equals(lld2)).isTrue();
     }
 }

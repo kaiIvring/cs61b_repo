@@ -58,4 +58,40 @@ public class ArrayDeque61BTest {
         assertThat(index).isEqualTo(3); // Ensure we iterated through all elements
     }
 
+    @Test
+    public void equalsTestBasic() {
+        ArrayDeque61B<Integer> ad1 = new ArrayDeque61B<>();
+        ArrayDeque61B<Integer> ad2 = new ArrayDeque61B<>();
+        ad1.addFirst(1);
+        ad1.addFirst(2);
+        ad1.addFirst(3);
+
+        ad2.addFirst(1);
+        ad2.addFirst(2);
+        ad2.addFirst(3);
+
+        assertThat(ad1.equals(ad2)).isTrue();
+    }
+
+    @Test
+    public void equalsFalseTest() {
+        ArrayDeque61B<Integer> ad1 = new ArrayDeque61B<>();
+        ArrayDeque61B<Integer> ad2 = new ArrayDeque61B<>();
+
+        ad1.addLast(1);
+        ad1.addLast(2);
+
+        ad2.addLast(1);
+        ad2.addLast(3);
+
+        assertThat(ad1.equals(ad2)).isFalse();
+    }
+
+    @Test
+    public void equalsEmptyDequeTest() {
+        ArrayDeque61B<Integer> ad1 = new ArrayDeque61B<>();
+        ArrayDeque61B<Integer> ad2 = new ArrayDeque61B<>();
+
+        assertThat(ad1.equals(ad2)).isTrue();
+    }
 }
