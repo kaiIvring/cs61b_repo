@@ -89,6 +89,12 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
         size = 0;
     }
 
+    // No need to implement this method
+    @Override
+    public boolean equal(Object o) {
+        return false;
+    }
+
     @Override
     public void addFirst(T x) {
         Node newNode = new Node(x, sentinel.next, sentinel);

@@ -107,6 +107,12 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
         nextLast = size;
     }
 
+    // No need to implement this method
+    @Override
+    public boolean equal(Object o) {
+        return false;
+    }
+
     @Override
     public void addFirst(T x) {
         if (items.length == size) {
