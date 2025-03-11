@@ -1,1 +1,1 @@
-homeworks, labs, projects for cs61b sp_24
+homeworks, labs, projects and Discussions for cs61b sp_24
