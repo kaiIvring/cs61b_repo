@@ -33,12 +33,28 @@ public class UnionFindTest {
         } catch (IllegalArgumentException e) {
             return;
         }
+
+        try {
+            uf.find(-1);
+            fail("Cannot find an negative vertex!");
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+
         try {
             uf.union(1, 10);
             fail("Cannot union with an out of range vertex!");
         } catch (IllegalArgumentException e) {
             return;
         }
+
+        try {
+            uf.sizeOf(10);
+            fail("Cannot calculate the size of an out of range vertex!");
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+
     }
 
     /**
@@ -80,6 +96,54 @@ public class UnionFindTest {
         }
     }
 
+    @Test
+    public void unionSizeTest() {
+        UnionFind uf = new UnionFind(6);
+        uf.union(0, 1);
+        uf.union(2, 3);
+        uf.union(4, 5);
+
+        assertThat(uf.sizeOf(0)).isEqualTo(2);
+        assertThat(uf.sizeOf(2)).isEqualTo(2);
+        assertThat(uf.sizeOf(4)).isEqualTo(2);
+
+        uf.union(0, 2);
+        assertThat(uf.sizeOf(0)).isEqualTo(4);
+
+        uf.union(4, 0);
+        assertThat(uf.sizeOf(0)).isEqualTo(6);
+    }
+
+    @Test
+    public void pathCompressionTest() {
+        UnionFind uf = new UnionFind(10);
+        uf.union(1, 0);
+        uf.union(3, 2);
+        uf.union(2, 1);
+        uf.union(5, 4);
+        uf.union(4, 3);
+
+        assertThat(uf.find(5)).isEqualTo(0);
+        assertThat(uf.parent(4)).isEqualTo(0);
+        assertThat(uf.parent(5)).isEqualTo(0);
+
+        assertThat(uf.find(3)).isEqualTo(0);
+        assertThat(uf.parent(2)).isEqualTo(0);
+        assertThat(uf.parent(3)).isEqualTo(0);
+    }
+
+    @Test
+    public void connectedTest() {
+        UnionFind uf = new UnionFind(5);
+        uf.union(0, 1);
+        uf.union(1, 2);
+
+        assertThat(uf.connected(0, 2)).isTrue();
+        assertThat(uf.connected(3, 4)).isFalse();
+
+        uf.union(2, 4);
+        assertThat(uf.connected(0, 4)).isTrue();
+    }
     /**
      * Write your own tests below here to verify for correctness. The given tests are not comprehensive.
      * Specifically, you may want to write a test for path compression and to check for the correctness
