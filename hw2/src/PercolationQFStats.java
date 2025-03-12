@@ -2,25 +2,25 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.Stopwatch;
 
-public class PercolationStats {
+public class PercolationQFStats {
     private final double mean;
     private final double stddev;
     private final double T;
 
-    public PercolationStats(int N, int T) {
+    public PercolationQFStats(int N, int T) {
         if (N <= 0 || T <= 0) {
             throw new IllegalArgumentException();
         }
         this.T = T;
         double[] ratio = new double[T];
         for (int i = 0; i < T; i += 1) {
-            Percolation p = new Percolation(N);
-            while (!p.percolates()) {
+            PercolationQF pqf = new PercolationQF(N);
+            while (!pqf.percolates()) {
                 int randRow = StdRandom.uniform(N);
                 int randCol = StdRandom.uniform(N);
-                p.open(randRow, randCol);
+                pqf.open(randRow, randCol);
             }
-            ratio[i] = ((double) p.numberOfOpenSites()) / (N * N);
+            ratio[i] = ((double) pqf.numberOfOpenSites()) / (N * N);
         }
 
         this.mean = StdStats.mean(ratio);
@@ -46,17 +46,15 @@ public class PercolationStats {
     public static void main(String[] args) {
         int trials = 100;
         for (int gridSize = 50; gridSize <= 300; gridSize += 50) {
-            // start the stopwatch
             Stopwatch sw = new Stopwatch();
-            PercolationStats ps = new PercolationStats(gridSize, trials);
+            PercolationQFStats pqfs = new PercolationQFStats(gridSize, trials);
 
-            // stop the stopwatch
             double elapsedTime = sw.elapsedTime();
 
             System.out.printf("Grid Size: %d x %d | Number of Trials: %d%n", gridSize, gridSize, trials);
-            System.out.printf("The mean percolation threshold is %.2f%n", ps.mean());
-            System.out.printf("The standard deviation of the percolation threshold is %.2f.%n", ps.stddev());
-            System.out.printf("The 95%% confidence interval is [%.3f, %.3f].%n", ps.confidenceLow(), ps.confidenceHigh());
+            System.out.printf("The mean percolation threshold is %.2f%n", pqfs.mean());
+            System.out.printf("The standard deviation of the percolation threshold is %.2f.%n", pqfs.stddev());
+            System.out.printf("The 95%% confidence interval is [%.3f, %.3f].%n", pqfs.confidenceLow(), pqfs.confidenceHigh());
             System.out.printf("Total time taken: %.2f seconds.%n%n", elapsedTime);
         }
     }
