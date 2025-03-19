@@ -1,0 +1,8 @@
+length of each string: 5
+stringNums, ULLMap, BSTMap, Built-in TreeMap, Built-in HashMap
+10000, 0.41s, 0.01s, 0.00s, 0.00s
+20000, 1.57s, 0.01s, 0.02s, 0.00s
+30000, 2.87s, 0.01s, 0.01s, 0.00s
+40000, overflow, 0.02s, 0.02s, 0.01s
+50000, overflow, 0.02s, 0.02s, 0.01s
+100000, overflow, 0.05s, 0.04s, 0.02s
