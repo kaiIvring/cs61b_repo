@@ -1,3 +1,5 @@
+import com.sun.source.doctree.BlockTagTree;
+
 public class RedBlackTree<T extends Comparable<T>> {
 
     /* Root of the tree. */
@@ -50,7 +52,16 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @param node
      */
     void flipColors(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
+        if (node == null || node.left == null || node.right == null) {
+            return;
+        }
+
+        if (node.isBlack && !node.left.isBlack && !node.right.isBlack) {
+            node.isBlack = false;
+            node.left.isBlack = true;
+            node.right.isBlack = true;
+        }
+
     }
 
     /**
@@ -61,8 +72,22 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @return
      */
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
-        return null;
+        if (node == null || node.left == null) {
+            return node;
+        }
+
+        RBTreeNode<T> leftNode = node.left;
+
+        // rotate the node
+        node.left = leftNode.right;
+        leftNode.right = node;
+
+        // swap the color
+        boolean temp = node.isBlack;
+        node.isBlack = leftNode.isBlack;
+        leftNode.isBlack = temp;
+
+        return leftNode;
     }
 
     /**
@@ -73,8 +98,20 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @return
      */
     RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
-        return null;
+        if (node == null || node.right == null) {
+            return node;
+        }
+
+        RBTreeNode<T> rightNode = node.right;
+
+        node.right = rightNode.left;
+        rightNode.left = node;
+
+        boolean temp = node.isBlack;
+        node.isBlack = rightNode.isBlack;
+        rightNode.isBlack = temp;
+
+        return rightNode;
     }
 
     /**
@@ -104,18 +141,38 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @param item
      * @return
      */
+    // Maintain the LLRBs using rotation WHILE inserting!
+    // which means you don't have to add other recursive helpers
+    // for every recursive call, you check whether do we need to rotate or color flip!
     private RBTreeNode<T> insert(RBTreeNode<T> node, T item) {
-        // TODO: Insert (return) new red leaf node.
+        // Insert (return) new red leaf node.
+        if (node == null) {
+            return new RBTreeNode<>(false, item);
+        }
 
-        // TODO: Handle normal binary search tree insertion.
+        // Handle normal binary search tree insertion.
+        if (item.compareTo(node.item) < 0) {
+            node.left = insert(node.left, item);
+        } else if (item.compareTo(node.item) > 0) {
+            node.right = insert(node.right, item);
+        }
 
-        // TODO: Rotate left operation
+        // Rotate left operation
+        if (isRed(node.right) && !isRed(node.left)) {
+            node = rotateLeft(node);
+        }
 
-        // TODO: Rotate right operation
+        // Rotate right operation
+        if (isRed(node.left) && isRed(node.left.left)) {
+            node = rotateRight(node);
+        }
 
-        // TODO: Color flip
+        // Color flip
+        if (isRed(node.left) && isRed(node.right)) {
+            flipColors(node);
+        }
 
-        return null; //fix this return statement
+        return node;
     }
 
 }
