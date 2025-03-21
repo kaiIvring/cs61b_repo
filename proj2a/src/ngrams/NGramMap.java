@@ -1,6 +1,10 @@
 package ngrams;
 
+import edu.princeton.cs.algs4.In;
+import org.apache.hc.core5.annotation.Internal;
+
 import java.util.Collection;
+import java.util.TreeMap;
 
 import static ngrams.TimeSeries.MAX_YEAR;
 import static ngrams.TimeSeries.MIN_YEAR;
@@ -18,12 +22,44 @@ import static ngrams.TimeSeries.MIN_YEAR;
 public class NGramMap {
 
     // TODO: Add any necessary static/instance variables.
+    // word -> TimeSeries -> year, counts
+    private TreeMap<String, TimeSeries> wordsFile;
+    // year -> counts
+    private TreeMap<Integer, Double> countsFile;
 
     /**
      * Constructs an NGramMap from WORDSFILENAME and COUNTSFILENAME.
      */
     public NGramMap(String wordsFilename, String countsFilename) {
         // TODO: Fill in this constructor. See the "NGramMap Tips" section of the spec for help.
+        wordsFile = new TreeMap<>();
+        countsFile = new TreeMap<>();
+
+        // words file
+        In inWords = new In(wordsFilename);
+        while (!inWords.isEmpty()) {
+            String nextLine = inWords.readLine();
+            String[] splitLine = nextLine.split("\t");
+
+            String word = splitLine[0];
+            int year = Integer.parseInt(splitLine[1]);
+            double count = Double.parseDouble(splitLine[2]);
+
+            wordsFile.putIfAbsent(word, new TimeSeries());
+            wordsFile.get(word).put(year, count);
+        }
+
+        // counts file
+        In inCounts = new In(countsFilename);
+        while (!inCounts.isEmpty()) {
+            String nextLine = inCounts.readLine();
+            String[] splitLine = nextLine.split(",");
+
+            int year = Integer.parseInt(splitLine[0]);
+            double totalCount = Double.parseDouble(splitLine[1]);
+
+            countsFile.put(year, totalCount);
+        }
     }
 
     /**
@@ -35,7 +71,11 @@ public class NGramMap {
      */
     public TimeSeries countHistory(String word, int startYear, int endYear) {
         // TODO: Fill in this method.
-        return null;
+        TimeSeries ts = new TimeSeries();
+        if (!wordsFile.containsValue(word)) {
+            return ts;
+        }
+        return ts;
     }
 
     /**
@@ -82,8 +122,7 @@ public class NGramMap {
      * ENDYEAR, inclusive of both ends. If a word does not exist in this time frame, ignore it
      * rather than throwing an exception.
      */
-    public TimeSeries summedWeightHistory(Collection<String> words,
-                                          int startYear, int endYear) {
+    public TimeSeries summedWeightHistory(Collection<String> words, int startYear, int endYear) {
         // TODO: Fill in this method.
         return null;
     }
