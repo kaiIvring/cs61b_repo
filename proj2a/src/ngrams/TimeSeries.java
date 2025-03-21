@@ -1,5 +1,8 @@
 package ngrams;
 
+import net.sf.saxon.functions.Minimax;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -30,15 +33,19 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries(TimeSeries ts, int startYear, int endYear) {
         super();
-        // TODO: Fill in this constructor.
+        for (int year : ts.keySet()) {
+            if (year >= startYear && year <= endYear) {
+                this.put(year, ts.get(year));
+            }
+        }
     }
 
     /**
      * Returns all years for this TimeSeries (in any order).
      */
     public List<Integer> years() {
-        // TODO: Fill in this method.
-        return null;
+        List<Integer> list = new ArrayList<>(this.keySet());
+        return list;
     }
 
     /**
@@ -46,8 +53,8 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * Must be in the same order as years().
      */
     public List<Double> data() {
-        // TODO: Fill in this method.
-        return null;
+        List<Double> list = new ArrayList<>(this.values());
+        return list;
     }
 
     /**
@@ -61,7 +68,11 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries plus(TimeSeries ts) {
         // TODO: Fill in this method.
-        return null;
+        TimeSeries newTs = new TimeSeries(this, MIN_YEAR, MAX_YEAR);
+        for (int year : ts.keySet()) {
+            newTs.put(year, newTs.getOrDefault(year, 0.0) + ts.get(year));
+        }
+        return newTs;
     }
 
     /**
@@ -74,10 +85,13 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * If TS has a year that is not in this TimeSeries, ignore it.
      */
     public TimeSeries dividedBy(TimeSeries ts) {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries newTs = new TimeSeries(this, MIN_YEAR, MAX_YEAR);
+        for (int year : this.keySet()) {
+            if (!ts.containsKey(year)) {
+                throw new IllegalArgumentException();
+            }
+            newTs.put(year, this.get(year) / ts.get(year));
+        }
+        return newTs;
     }
-
-    // TODO: Add any private helper methods.
-    // TODO: Remove all TODO comments before submitting.
 }
