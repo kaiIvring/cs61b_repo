@@ -3,7 +3,9 @@ package ngrams;
 import edu.princeton.cs.algs4.In;
 import org.apache.hc.core5.annotation.Internal;
 
+import java.sql.Time;
 import java.util.Collection;
+import java.util.Timer;
 import java.util.TreeMap;
 
 import static ngrams.TimeSeries.MAX_YEAR;
@@ -20,8 +22,6 @@ import static ngrams.TimeSeries.MIN_YEAR;
  * @author Josh Hug
  */
 public class NGramMap {
-
-    // TODO: Add any necessary static/instance variables.
     // word -> TimeSeries -> year, counts
     private TreeMap<String, TimeSeries> wordsFile;
     // year -> counts
@@ -31,7 +31,6 @@ public class NGramMap {
      * Constructs an NGramMap from WORDSFILENAME and COUNTSFILENAME.
      */
     public NGramMap(String wordsFilename, String countsFilename) {
-        // TODO: Fill in this constructor. See the "NGramMap Tips" section of the spec for help.
         wordsFile = new TreeMap<>();
         countsFile = new TreeMap<>();
 
@@ -70,12 +69,10 @@ public class NGramMap {
      * returns an empty TimeSeries.
      */
     public TimeSeries countHistory(String word, int startYear, int endYear) {
-        // TODO: Fill in this method.
-        TimeSeries ts = new TimeSeries();
-        if (!wordsFile.containsValue(word)) {
-            return ts;
+        if (!wordsFile.containsKey(word)) {
+            return new TimeSeries();
         }
-        return ts;
+        return new TimeSeries(wordsFile.get(word), startYear, endYear);
     }
 
     /**
@@ -85,16 +82,21 @@ public class NGramMap {
      * is not in the data files, returns an empty TimeSeries.
      */
     public TimeSeries countHistory(String word) {
-        // TODO: Fill in this method.
-        return null;
+        if (!wordsFile.containsKey(word)) {
+            return new TimeSeries();
+        }
+        return new TimeSeries(wordsFile.get(word), MIN_YEAR, MAX_YEAR);
     }
 
     /**
      * Returns a defensive copy of the total number of words recorded per year in all volumes.
      */
     public TimeSeries totalCountHistory() {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries ts = new TimeSeries();
+        for (int year : countsFile.keySet()) {
+            ts.put(year, countsFile.get(year));
+        }
+        return ts;
     }
 
     /**
@@ -103,8 +105,15 @@ public class NGramMap {
      * TimeSeries.
      */
     public TimeSeries weightHistory(String word, int startYear, int endYear) {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries ts = countHistory(word, startYear, endYear);
+        TimeSeries result = new TimeSeries();
+
+        for (int year : ts.keySet()) {
+            if (countsFile.containsKey(year)) {
+                result.put(year, ts.get(year) / countsFile.get(year));
+            }
+        }
+        return result;
     }
 
     /**
@@ -113,8 +122,15 @@ public class NGramMap {
      * TimeSeries.
      */
     public TimeSeries weightHistory(String word) {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries ts = countHistory(word);
+        TimeSeries result = new TimeSeries();
+
+        for (int year : ts.keySet()) {
+            if (ts.containsKey(year)) {
+                result.put(year, ts.get(year) / countsFile.get(year));
+            }
+        }
+        return result;
     }
 
     /**
@@ -123,8 +139,17 @@ public class NGramMap {
      * rather than throwing an exception.
      */
     public TimeSeries summedWeightHistory(Collection<String> words, int startYear, int endYear) {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries result = new TimeSeries();
+        for (String word : words) {
+            if (!wordsFile.containsKey(word)) {
+                continue;
+            }
+            TimeSeries ts = weightHistory(word, startYear, endYear);
+            for (int year : ts.keySet()) {
+                result.put(year, result.getOrDefault(year, 0.0) + ts.get(year));
+            }
+        }
+        return result;
     }
 
     /**
@@ -132,10 +157,16 @@ public class NGramMap {
      * exist in this time frame, ignore it rather than throwing an exception.
      */
     public TimeSeries summedWeightHistory(Collection<String> words) {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries result = new TimeSeries();
+        for (String word : words) {
+            if (!wordsFile.containsKey(word)) {
+                continue;
+            }
+            TimeSeries ts = weightHistory(word);
+            for (int year : ts.keySet()) {
+                result.put(year, result.getOrDefault(year, 0.0) + ts.get(year));
+            }
+        }
+        return result;
     }
-
-    // TODO: Add any private helper methods.
-    // TODO: Remove all TODO comments before submitting.
 }

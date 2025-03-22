@@ -3,6 +3,7 @@ import ngrams.TimeSeries;
 
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,8 +47,7 @@ public class NGramMapTest {
     @Test
     public void testOnLargeFile() {
         // creates an NGramMap from a large dataset
-        NGramMap ngm = new NGramMap(TOP_14337_WORDS_FILE,
-                TOTAL_COUNTS_FILE);
+        NGramMap ngm = new NGramMap(TOP_14337_WORDS_FILE, TOTAL_COUNTS_FILE);
 
         // returns the count of the number of occurrences of fish per year between 1850 and 1933.
         TimeSeries fishCount = ngm.countHistory("fish", 1850, 1933);
@@ -71,6 +71,40 @@ public class NGramMapTest {
 
         double expectedFishPlusDogWeight1865 = (136497.0 + 75819.0) / 2563919231.0;
         assertThat(fishPlusDogWeight.get(1865)).isWithin(1E-10).of(expectedFishPlusDogWeight1865);
+    }
+
+    @Test
+    public void testOnLargeFilesExtra() {
+        NGramMap ngm = new NGramMap(TOP_14337_WORDS_FILE, TOTAL_COUNTS_FILE);
+
+        TimeSeries hatsCount = ngm.countHistory("hats");
+        assertThat(hatsCount.get(2019)).isWithin(1E-10).of(119388);
+        assertThat(hatsCount.get(2018)).isWithin(1E-10).of(136053);
+
+        TimeSeries hatsWeight = ngm.weightHistory("hats");
+        assertThat(hatsWeight.get(2019)).isWithin(1E-7).of(119388.0 / 22826152232.0);
+        assertThat(hatsWeight.get(2018)).isWithin(1E-7).of(136053.0 / 26305614574.0);
+
+        List<String> happyAndSad = new ArrayList<>();
+        happyAndSad.add("happy");
+        happyAndSad.add("sad");
+        TimeSeries happyPlusSadWeight = ngm.summedWeightHistory(happyAndSad);
+
+        double expectedWeight2019 = (2145187.0 + 660263.0) / 22826152232.0;
+        assertThat(happyPlusSadWeight.get(2019)).isWithin(1E-10).of(expectedWeight2019);
+    }
+
+    @Test
+    public void testSummedWeightHistory() {
+        NGramMap ngm = new NGramMap(SHORT_WORDS_FILE, TOTAL_COUNTS_FILE);
+        List<String> airportAndRequest = new ArrayList<>();
+        airportAndRequest.add("airport");
+        airportAndRequest.add("request");
+        TimeSeries airportPlusRequestWeight = ngm.summedWeightHistory(airportAndRequest);
+
+        double expectedWeight2007 = (175702.0 + 697645.0) / 28307904288.0;
+        assertThat(airportPlusRequestWeight.get(2007)).isWithin(1E-10).of(expectedWeight2007);
+
     }
 
 }  
