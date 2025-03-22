@@ -105,6 +105,9 @@ public class NGramMap {
      * TimeSeries.
      */
     public TimeSeries weightHistory(String word, int startYear, int endYear) {
+        if (!wordsFile.containsKey(word)) {
+            return new TimeSeries();
+        }
         TimeSeries ts = countHistory(word, startYear, endYear);
         TimeSeries result = new TimeSeries();
 
@@ -122,6 +125,9 @@ public class NGramMap {
      * TimeSeries.
      */
     public TimeSeries weightHistory(String word) {
+        if (!wordsFile.containsKey(word)) {
+            return new TimeSeries();
+        }
         TimeSeries ts = countHistory(word);
         TimeSeries result = new TimeSeries();
 

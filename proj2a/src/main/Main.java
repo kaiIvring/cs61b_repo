@@ -19,7 +19,7 @@ public class Main {
         NGramMap ngm = new NGramMap(TOP_14337_WORDS_FILE, TOTAL_COUNTS_FILE);
 
         hns.startUp();
-        hns.register("history", new DummyHistoryHandler());
+        hns.register("history", new HistoryHandler(ngm));
         hns.register("historytext", new HistoryTextHandler(ngm));
 
         System.out.println("Finished server startup! Visit http://localhost:4567/ngordnet_2a.html");
