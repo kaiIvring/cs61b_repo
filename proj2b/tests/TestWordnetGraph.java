@@ -47,5 +47,5 @@ public class TestWordnetGraph {
         assertThat(hyponymsUnknown).isEmpty();
     }
 
-    
+
 }
