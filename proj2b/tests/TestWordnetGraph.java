@@ -46,6 +46,4 @@ public class TestWordnetGraph {
         Set<String> hyponymsUnknown = wg.getAllHyponyms("fish");
         assertThat(hyponymsUnknown).isEmpty();
     }
-
-
 }
