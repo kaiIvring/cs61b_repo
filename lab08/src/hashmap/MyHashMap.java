@@ -1,8 +1,6 @@
 package hashmap;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  A hash table-backed Map implementation.
@@ -12,6 +10,8 @@ import java.util.Set;
  */
 public class MyHashMap<K, V> implements Map61B<K, V> {
 
+    private final int INITIALCAPACITY = 16;
+    private final double LOADFACTOR = 0.75;
     /**
      * Protected helper class to store key/value pairs
      * The protected qualifier allows subclass access
@@ -28,12 +28,22 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     /* Instance Variables */
     private Collection<Node>[] buckets;
+    private int size;
+    private double loadfactor;
     // You should probably define some more!
 
     /** Constructors */
-    public MyHashMap() { }
+    public MyHashMap() {
+        buckets = (Collection<Node>[]) new Collection[INITIALCAPACITY];
+        size = 0;
+        loadfactor = LOADFACTOR;
+    }
 
-    public MyHashMap(int initialCapacity) { }
+    public MyHashMap(int initialCapacity) {
+        buckets = new Collection[initialCapacity];
+        size = 0;
+        loadfactor = LOADFACTOR;
+    }
 
     /**
      * MyHashMap constructor that creates a backing array of initialCapacity.
@@ -42,7 +52,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param initialCapacity initial size of backing array
      * @param loadFactor maximum load factor
      */
-    public MyHashMap(int initialCapacity, double loadFactor) { }
+    public MyHashMap(int initialCapacity, double loadFactor) {
+        buckets = new Collection[initialCapacity];
+        size = 0;
+        this.loadfactor = loadFactor;
+    }
 
     /**
      * Returns a data structure to be a hash table bucket
@@ -65,8 +79,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * OWN BUCKET DATA STRUCTURES WITH THE NEW OPERATOR!
      */
     protected Collection<Node> createBucket() {
-        // TODO: Fill in this method.
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -79,8 +92,57 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void put(K key, V value) {
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null!");
+        }
+        int index = Math.floorMod(key.hashCode(), buckets.length);
+        if (buckets[index] == null) {
+            buckets[index] = createBucket();
+        }
+        //  if the key has already exist
+        for (Node tmpNode : buckets[index]) {
+            if (tmpNode.key.equals(key)) {
+                tmpNode.value = value;
+                return;
+            }
+        }
 
+        // add new node
+        Node newNode = new Node(key, value);
+        buckets[index].add(newNode);
+        size++;
+        // resize up
+        if ( (double) size / buckets.length >= loadfactor) {
+            // buckets = resize(buckets);
+            resize();
+        }
     }
+
+    private void resize() {
+        MyHashMap<K, V> newMap = new MyHashMap<>(buckets.length * 2, loadfactor);
+        for (Collection<Node> bucket : buckets) {
+            if (bucket != null) {
+                for (Node node : bucket) {
+                    newMap.put(node.key, node.value);
+                }
+            }
+        }
+        this.buckets = newMap.buckets;
+        this.size = newMap.size;
+    }
+
+    private Collection<Node>[] resize(Collection<Node>[] buckets) {
+        MyHashMap<K, V> newMap = new MyHashMap<>(buckets.length * 2);
+        for (int i = 0; i < buckets.length; i++) {
+            if (buckets[i] != null) {
+                for (Node tmpNode : buckets[i]) {
+                    newMap.put(tmpNode.key, tmpNode.value);
+                }
+            }
+        }
+        return newMap.buckets;
+    }
+
 
     /**
      * Returns the value to which the specified key is mapped, or null if this
@@ -90,6 +152,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
+        // find the bucket
+        int index = Math.floorMod(key.hashCode(), buckets.length);
+        Collection<Node> bucket = buckets[index];
+        if (bucket == null) {
+            return null;
+        }
+
+        for (Node node : bucket) {
+            if (node.key.equals(key)) {
+                return node.value;
+            }
+        }
+
         return null;
     }
 
@@ -100,6 +175,16 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public boolean containsKey(K key) {
+        int index = Math.floorMod(key.hashCode(), buckets.length);
+        Collection<Node> bucket = buckets[index];
+        if (bucket == null) {
+            return false;
+        }
+        for (Node node : bucket) {
+            if (node.key.equals(key)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -108,7 +193,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -116,7 +201,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void clear() {
-
+        this.size = 0;
+        this.buckets = new Collection[buckets.length];
     }
 
     /**
@@ -125,7 +211,15 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        return Set.of();
+        Set<K> returnSet = new HashSet<>();
+        for (Collection<Node> bucket : buckets) {
+            if (bucket != null) {
+                for (Node node : bucket) {
+                    returnSet.add(node.key);
+                }
+            }
+        }
+        return returnSet;
     }
 
     /**
@@ -138,6 +232,20 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
+        int index = Math.floorMod(key.hashCode(), buckets.length);
+        Collection<Node> bucket = buckets[index];
+        if (bucket == null) {
+            return null;
+        }
+        Iterator<Node> iter = bucket.iterator();
+        while (iter.hasNext()) {
+            Node node = iter.next();
+            if (node.key.equals(key)) {
+                iter.remove();
+                size--;
+                return node.value;
+            }
+        }
         return null;
     }
 
@@ -148,9 +256,55 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Iterator<K> iterator() {
-        return null;
+        return new MyHashMapIterator();
     }
-    // TODO: Implement the methods of the Map61B Interface below
+
+    private class MyHashMapIterator implements Iterator<K> {
+        /**
+         * Returns {@code true} if the iteration has more elements.
+         * (In other words, returns {@code true} if {@link #next} would
+         * return an element rather than throwing an exception.)
+         *
+         * @return {@code true} if the iteration has more elements
+         */
+        private Collection<Node>[] bucketsCopy;
+        private int copySize;
+        private MyHashMapIterator() {
+            bucketsCopy = buckets;
+            copySize = size;
+        }
+        @Override
+        public boolean hasNext() {
+            if (copySize > 0) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws NoSuchElementException if the iteration has no more elements
+         */
+        @Override
+        public K next() {
+            if (hasNext()) {
+               for (Collection<Node> bucket : bucketsCopy) {
+                   if (bucket != null) {
+                       for (Node node : bucket) {
+                           K returnKey = node.key;
+                           node.key = null;
+                           node.value = null;
+                           copySize--;
+                           return returnKey;
+                       }
+                   }
+               }
+            }
+            return null;
+        }
+    }
     // Your code won't compile until you do so!
 
 }
