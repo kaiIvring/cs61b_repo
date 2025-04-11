@@ -1,0 +1,17 @@
+InsertInOrderSpeedTest
+String length: 3
+String number: 100000, 1000000
+ULLMap: 8.12s, 74.95s
+MyHashMap: 0.05s, 0.13s
+Java's Built-in HashMap: 0.02s, 0.10s
+
+InsertRandomSpeedTest
+String length: 3
+String number: 100000, 1000000, 10000000
+ULLMap: 9.63s, 65.18s, ...
+MyHashMap: 0.05s, 0.12s, 1.39s
+Java's Built-in HashMap: 0.01s, 0.09s, 1.43s
+
+HashMaps are best used when you need
+fast access, insertion, or deletion of key-value pairs
+and don’t care about the order of the keys.
