@@ -180,6 +180,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         if (bucket == null) {
             return false;
         }
+
         for (Node node : bucket) {
             if (node.key.equals(key)) {
                 return true;
@@ -237,6 +238,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         if (bucket == null) {
             return null;
         }
+
+        // use iterator to iterate through the bucket and remove the key
         Iterator<Node> iter = bucket.iterator();
         while (iter.hasNext()) {
             Node node = iter.next();
@@ -260,6 +263,24 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     private class MyHashMapIterator implements Iterator<K> {
+        private int bucketIndex; // the "bucketIndexth" bucket
+        private Iterator<Node> bucketIterator; // iterator for current bucket(Collection<Node>), iterate through current bucket
+
+        public MyHashMapIterator() {
+            bucketIndex = 0;
+            advanceToNextNonEmptyBucket();
+        }
+
+        private void advanceToNextNonEmptyBucket() {
+            while (bucketIndex < buckets.length) {
+                if (buckets[bucketIndex] != null && !buckets[bucketIndex].isEmpty()) {
+                    bucketIterator = buckets[bucketIndex].iterator();
+                    return; // once we find the non-empty bucket, we return.
+                }
+                bucketIndex++;
+            }
+            bucketIterator = null; // all nodes have been visited
+        }
         /**
          * Returns {@code true} if the iteration has more elements.
          * (In other words, returns {@code true} if {@link #next} would
@@ -267,18 +288,17 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
          *
          * @return {@code true} if the iteration has more elements
          */
-        private Collection<Node>[] bucketsCopy;
-        private int copySize;
-        private MyHashMapIterator() {
-            bucketsCopy = buckets;
-            copySize = size;
-        }
         @Override
         public boolean hasNext() {
-            if (copySize > 0) {
+            if (bucketIterator == null) {
+                return false;
+            }
+            if (bucketIterator.hasNext()) {
                 return true;
             }
-            return false;
+            bucketIndex++;
+            advanceToNextNonEmptyBucket();
+            return bucketIterator != null && bucketIterator.hasNext();
         }
 
         /**
@@ -289,22 +309,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
          */
         @Override
         public K next() {
-            if (hasNext()) {
-               for (Collection<Node> bucket : bucketsCopy) {
-                   if (bucket != null) {
-                       for (Node node : bucket) {
-                           K returnKey = node.key;
-                           node.key = null;
-                           node.value = null;
-                           copySize--;
-                           return returnKey;
-                       }
-                   }
-               }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
             }
-            return null;
+            return bucketIterator.next().key;
         }
     }
     // Your code won't compile until you do so!
-
 }
