@@ -2,6 +2,7 @@ package main;
 
 import browser.NgordnetQuery;
 import browser.NgordnetQueryHandler;
+import browser.NgordnetQueryType;
 import ngrams.NGramMap;
 import ngrams.TimeSeries;
 import wordnet.Wordnet;
@@ -22,42 +23,58 @@ public class HyponymsHandler extends NgordnetQueryHandler {
         int k = q.k();
         int startYear = q.startYear();
         int endYear = q.endYear();
+        NgordnetQueryType type = q.ngordnetQueryType();
 
-        // getAllHyponyms for a word
-        Set<String> hyponym = wn.getHyponyms(words.get(0));
-        for (int i = 1; i < words.toArray().length; i++) {
-            Set<String> hypoSet = wn.getHyponyms(words.get(i));
-            hyponym.retainAll(hypoSet);
+        Set<String> result;
+
+        if (type == NgordnetQueryType.HYPONYMS) {
+            // getAllHyponyms for a word
+            result = wn.getHyponyms(words.get(0));
+            for (int i = 1; i < words.size(); i++) {
+                result.retainAll(wn.getHyponyms(words.get(i)));
+            }
+        } else if (type == NgordnetQueryType.ANCESTORS) {
+            // getAllAncestors for a word
+            result = wn.getAncestors(words.get(0));
+            for (int i = 1; i < words.size(); i++) {
+                result.retainAll(wn.getAncestors(words.get(i)));
+            }
+        } else {
+            return "[]";
+        }
+
+        // on need to handle k
+        if (k == 0 || result.size() <= k) {
+            // sort the hyponyms set alphabetically
+            List<String> sorted = new ArrayList<>(result);
+            Collections.sort(sorted);
+            return sorted.toString();
         }
 
         // handling k != 0
-        if (hyponym.size() > k && k != 0) {
-            // store every word with its counts: hyponymMap
-            Map<String, Integer> hyponymMap = new HashMap<>();
-            for (String word : hyponym) {
-                TimeSeries ts = ngm.countHistory(word, startYear, endYear);
-                int count = 0;
-                for (int year : ts.keySet()) {
-                    count += ts.get(year);
-                }
-                hyponymMap.put(word, count);
+        Map<String, Integer> countMap = new HashMap<>();
+        for (String word : result) {
+            // word counts
+            TimeSeries ts = ngm.countHistory(word, startYear, endYear);
+            int count = 0;
+            for (int year : ts.keySet()) {
+                count += ts.get(year);
             }
-            List<Map.Entry<String, Integer>> entries = new ArrayList<>(hyponymMap.entrySet());
-            entries.sort((a, b) -> b.getValue() - a.getValue());
-
-            List<String> topK = new ArrayList<>();
-            for (int i = 0; i < k && i < entries.size(); i++) {
-                topK.add(entries.get(i).getKey());
-            }
-
-            Collections.sort(topK);
-            return topK.toString();
+            countMap.put(word, count);
         }
 
-        // sort the hyponyms set alphabetically
-        List<String> sortedHyponyms = new ArrayList<>(hyponym);
-        Collections.sort(sortedHyponyms);
+        // sort the countMap
+        List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(countMap.entrySet());
+        sortedEntries.sort((a, b) -> b.getValue() - a.getValue());
 
-        return sortedHyponyms.toString();
+        // get the TopK entries' keys
+        List<String> topK = new ArrayList<>();
+        for (int i = 0; i < k && i < sortedEntries.size(); i++) {
+            topK.add(sortedEntries.get(i).getKey());
+        }
+
+        // sort the result alphabetically
+        Collections.sort(topK);
+        return topK.toString();
     }
 }

@@ -37,4 +37,7 @@ public class Wordnet {
     public Set<String> getHyponyms(String word) {
         return graph.getAllHyponyms(word);
     }
+    public Set<String> getAncestors(String word) {
+        return graph.getAllAncestors(word);
+    }
 }
