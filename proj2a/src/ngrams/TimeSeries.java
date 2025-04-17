@@ -67,7 +67,6 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * should store the value from the TimeSeries that contains that year.
      */
     public TimeSeries plus(TimeSeries ts) {
-        // TODO: Fill in this method.
         TimeSeries newTs = new TimeSeries(this, MIN_YEAR, MAX_YEAR);
         for (int year : ts.keySet()) {
             newTs.put(year, newTs.getOrDefault(year, 0.0) + ts.get(year));
