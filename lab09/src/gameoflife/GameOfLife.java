@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
 import tileengine.TETile;
 import tileengine.Tileset;
-import utils.FileUtils;
 
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -233,19 +232,57 @@ public class GameOfLife {
      * @return
      */
     public TETile[][] nextGeneration(TETile[][] tiles) {
-        TETile[][] nextGen = new TETile[width][height];
+        TETile[][] nextGen = new TETile[width][this.height];
         // The board is filled with Tileset.NOTHING
         fillWithNothing(nextGen);
 
-        // TODO: Implement this method so that the described transitions occur.
-        // TODO: The current state is represented by TETiles[][] tiles and the next
-        // TODO: state/evolution should be returned in TETile[][] nextGen.
+        int height = tiles[0].length;
+        int width = tiles.length;
 
+        // iterate though the 2d Array
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                // count each tile's live neighbors
+                int liveNeighbors = calLiveNeighbors(i, j, tiles);
+                if (tiles[i][j] == Tileset.NOTHING && liveNeighbors == 3) {
+                    // dead cell becomes alive
+                    nextGen[i][j] = Tileset.CELL;
+                } else if (tiles[i][j] == Tileset.CELL && (liveNeighbors == 2 || liveNeighbors == 3)) {
+                    // live cell maintain
+                    nextGen[i][j] = Tileset.CELL;
+                }
+            }
+        }
 
+        return nextGen;
+    }
 
+    /**
+     * Helper method to count the number of
+     * live neighbors
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param tiles 2d array
+     * @return number of live neighbors
+     */
+    public int calLiveNeighbors(int x, int y, TETile[][] tiles) {
+        int height = tiles[0].length;
+        int width = tiles.length;
+        int liveCount = 0;
 
-        // TODO: Returns the next evolution in TETile[][] nextGen.
-        return null;
+        // iterate through 8 neighbors
+        for (int i = x - 1; i <= x + 1; i++) {
+           for (int j = y - 1; j <= y + 1; j++) {
+               // check if the coordinate is legal
+               if (i >= 0 && i < width && j >= 0 && j < height && (i != x || j != y)) {
+                   if (tiles[i][j] == Tileset.CELL) {
+                       liveCount++;
+                   }
+               }
+           }
+        }
+
+        return liveCount;
     }
 
     /**
