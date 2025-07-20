@@ -8,6 +8,8 @@ import tileengine.Tileset;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+import utils.FileUtils;
+
 /**
  * Am implementation of Conway's Game of Life using StdDraw.
  * Credits to Erik Nelson, Jasmine Lin and Elana Ho for
@@ -303,20 +305,27 @@ public class GameOfLife {
      * 0 represents NOTHING, 1 represents a CELL.
      */
     public void saveBoard() {
-        // TODO: Save the dimensions of the board into the first line of the file.
-        // TODO: The width and height should be separated by a space, and end with "\n".
+        int height = currentState[0].length;
+        int width = currentState.length;
+        StringBuilder oneLine = new StringBuilder();
+        FileUtils fu = new FileUtils();
 
+        oneLine.append(width + " " + height + "\n");
+        fu.writeFile(SAVE_FILE, oneLine.toString());
 
-
-        // TODO: Save the current state of the board into save.txt. You should
-        // TODO: use the provided FileUtils functions to help you. Make sure
-        // TODO: the orientation is correct! Each line in the board should
-        // TODO: end with a new line character.
-
-
-
-
-
+        // iterate from top left to bottom right
+        for (int j = height - 1; j >= 0; j--) {
+            oneLine.setLength(0); // clear oneLine, every cycle start fresh
+            for (int i = 0; i < width; i++) {
+                if (currentState[i][j] == Tileset.CELL) {
+                    oneLine.append("1");
+                } else {
+                    oneLine.append("0");
+                }
+            }
+            oneLine.append("\n");
+            fu.writeFile(SAVE_FILE, oneLine.toString());
+        }
     }
 
     /**

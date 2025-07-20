@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import java.nio.file.StandardOpenOption;
+
 /**
  * A library of simple file operations. Feel free to modify this file.
  */
@@ -17,7 +19,14 @@ public class FileUtils {
      */
     public static void writeFile(String filename, String contents) {
         try {
-            Files.writeString(new File(filename).toPath(), newlineReplacer(contents));
+            Files.writeString (
+                    new File(filename).toPath(),
+                    newlineReplacer(contents),
+                    // if the file does not exit, then create
+                    // if it does, then append
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND
+            );
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
