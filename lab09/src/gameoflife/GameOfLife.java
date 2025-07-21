@@ -274,7 +274,7 @@ public class GameOfLife {
 
         // iterate through 8 neighbors
         for (int i = x - 1; i <= x + 1; i++) {
-           for (int j = y - 1; j <= y + 1; j++) {
+            for (int j = y - 1; j <= y + 1; j++) {
                // check if the coordinate is legal
                if (i >= 0 && i < width && j >= 0 && j < height && (i != x || j != y)) {
                    if (tiles[i][j] == Tileset.CELL) {
@@ -305,12 +305,13 @@ public class GameOfLife {
      * 0 represents NOTHING, 1 represents a CELL.
      */
     public void saveBoard() {
-        int height = currentState[0].length;
-        int width = currentState.length;
+        height = currentState[0].length;
+        width = currentState.length;
         StringBuilder oneLine = new StringBuilder();
         FileUtils fu = new FileUtils();
 
         oneLine.append(width + " " + height + "\n");
+        fu.clearFile(SAVE_FILE); // clear file before save board
         fu.writeFile(SAVE_FILE, oneLine.toString());
 
         // iterate from top left to bottom right
@@ -333,25 +334,34 @@ public class GameOfLife {
      * 0 represents NOTHING, 1 represents a CELL.
      */
     public TETile[][] loadBoard(String filename) {
-        // TODO: Read in the file.
+        FileUtils fu = new FileUtils();
+        // read the whole file as a String
+        String oneLine = fu.readFile(filename);
 
-        // TODO: Split the file based on the new line character.
+        String[] parts = oneLine.split("\n");
+        int m = 0;
 
-        // TODO: Grab and set the dimensions from the first line.
+        String line = parts[m];
+        // deal with multiple digit number
+        String[] nums = line.trim().split("\\s+");
+        width = Integer.parseInt(nums[0]);
+        height = Integer.parseInt(nums[1]);
+        m = m + 1;
 
-        // TODO: Create a TETile[][] to load the board from the file into
-        // TODO: and any additional variables that you think might help.
+        TETile[][] tiles = new TETile[width][height];
+        fillWithNothing(tiles);
 
-
-        // TODO: Load the state of the board from the given filename. You can
-        // TODO: use the provided builder variable to help you and FileUtils
-        // TODO: functions. Make sure the orientation is correct!
-
-
-
-
-        // TODO: Return the board you loaded. Replace/delete this line.
-        return null;
+        // from top left to bottom right
+        for (int j = height - 1; j >= 0; j--) {
+            for (int i = 0; i < width; i++) {
+                int cellNumber = Character.getNumericValue(parts[m].charAt(i));
+                if (cellNumber == 1) {
+                    tiles[i][j] = Tileset.CELL;
+                }
+            }
+            m++;
+        }
+        return tiles;
     }
 
     /**

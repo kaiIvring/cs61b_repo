@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
@@ -44,6 +45,18 @@ public class FileUtils {
             return newlineReplacer(Files.readString(new File(filename).toPath()));
         } catch (IOException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    public static void clearFile(String filename) {
+        try {
+            Files.newBufferedWriter (
+                Path.of(filename),
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.CREATE
+            ).close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
