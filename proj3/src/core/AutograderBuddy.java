@@ -18,9 +18,29 @@ public class AutograderBuddy {
      * @return the 2D TETile[][] representing the state of the world
      */
     public static TETile[][] getWorldFromInput(String input) {
+        if (input == null || input.length() == 0) {
+            throw new IllegalArgumentException("input is empty");
+        }
 
-        throw new RuntimeException("Please fill out AutograderBuddy!");
+        String s = input.trim().toLowerCase();
+        // Expect formats like: n<seed>s, optionally with trailing commands we ignore here
+        if (s.charAt(0) != 'n') {
+            throw new IllegalArgumentException("input must start with n<seed>s");
+        }
+        int sIndex = s.indexOf('s', 1);
+        if (sIndex < 0) {
+            throw new IllegalArgumentException("missing 's' after seed");
+        }
+        String seedStr = s.substring(1, sIndex);
+        if (seedStr.length() == 0) {
+            throw new IllegalArgumentException("missing seed");
+        }
+        long seed = Long.parseLong(seedStr);
 
+        // Choose a default canvas size; tests initialize renderer with tiles length/height
+        int width = 60;
+        int height = 40;
+        return World.generateWorld(width, height, seed);
     }
 
 
