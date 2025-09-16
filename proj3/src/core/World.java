@@ -1,6 +1,5 @@
 package core;
 
-import tileengine.TERenderer;
 import tileengine.TETile;
 import tileengine.Tileset;
 
@@ -10,37 +9,20 @@ import java.util.Collections;
 import java.util.List;
 
 public class World {
-    private static final int DEFAULT_WIDTH = 50;
-    private static final int DEFAULT_HEIGHT = 50;
-    private TERenderer ter;
-    private Random random;
-
-    /**
-     * Fills the 2D array of tiles with NOTHING tiles.
-     * @param tiles
-     */
-    public void fillWithNothing(TETile[][] tiles) {
-        int height = tiles[0].length;
-        int width = tiles.length;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                tiles[x][y] = Tileset.NOTHING;
-            }
-        }
-    }
-
     // build your own world!
 
     /**
      * Generates a pseudo-random world consisting of rectangular rooms and L-shaped hallways.
      * Floors and walls are visually distinct from empty space; no floors touch the outer border.
      */
+    // the (0,0) coordinate is the bottom-left corner of the world
     public static TETile[][] generateWorld(int width, int height, long seed) {
         if (width < 5 || height < 5) {
             throw new IllegalArgumentException("World too small");
         }
 
         Random r = new Random(seed);
+        // fill the world with nothing
         TETile[][] tiles = new TETile[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -48,34 +30,56 @@ public class World {
             }
         }
 
+        // define a rectangle class
         class Rect {
+            // coordinates and dimensions
+            // x, y represents the bottom-left corner of the rectangle
             int x, y, w, h;
-            Rect(int x, int y, int w, int h) { this.x = x; this.y = y; this.w = w; this.h = h; }
+            Rect(int x, int y, int w, int h) { 
+                this.x = x; this.y = y; this.w = w; this.h = h; 
+            }
+            // center coordinates
             int cx() { return x + w / 2; }
             int cy() { return y + h / 2; }
+            // check if the rectangles intersect
             boolean intersects(Rect other) {
+                // intersects if the rectangles overlap
                 return x < other.x + other.w + 1 && x + w + 1 > other.x &&
                        y < other.y + other.h + 1 && y + h + 1 > other.y;
             }
         }
 
+        // generate the rooms
         int targetRooms = Math.max(10, (width * height) / 150);
         int maxRooms = targetRooms + 8;
         int attempts = 0;
         List<Rect> rooms = new ArrayList<>();
+        // try to generate rooms until we have the maximum number of rooms or we have tried too many times
         while (rooms.size() < maxRooms && attempts < maxRooms * 25) {
             attempts++;
+            // rw = random width of the room
+            // rw & rh will grow as the world gets bigger
             int rw = 3 + r.nextInt(Math.max(3, Math.min(10, Math.max(3, width / 6))));
             int rh = 3 + r.nextInt(Math.max(3, Math.min(10, Math.max(3, height / 6))));
+            // use width-rw-2 to make sure that rooms won't be clipped off the edge of the world
             int rx = 1 + r.nextInt(Math.max(1, width - rw - 2));
             int ry = 1 + r.nextInt(Math.max(1, height - rh - 2));
             Rect rect = new Rect(rx, ry, rw, rh);
             boolean ok = true;
+            // check if the room intersects with any existing rooms
             for (Rect existing : rooms) {
-                if (rect.intersects(existing)) { ok = false; break; }
+                if (rect.intersects(existing)) {
+                    ok = false;
+                    break;
+                }
             }
-            if (!ok) { continue; }
+            // if the room intersects with any existing rooms, try again
+            if (!ok) { 
+                continue; 
+            }
+            // otherwise, add the room to the list of rooms
             rooms.add(rect);
+            // fill the room with floors
             for (int x = rect.x; x < rect.x + rect.w; x++) {
                 for (int y = rect.y; y < rect.y + rect.h; y++) {
                     tiles[x][y] = Tileset.FLOOR;
@@ -83,6 +87,7 @@ public class World {
             }
         }
 
+        // if there are less than 2 rooms, generate a single room
         if (rooms.size() < 2) {
             int rw = Math.max(3, width / 4);
             int rh = Math.max(3, height / 4);
@@ -96,6 +101,7 @@ public class World {
             rooms.add(new Rect(rx, ry, rw, rh));
         }
 
+        // shuffle the rooms
         Collections.shuffle(rooms, r);
         for (int i = 1; i < rooms.size(); i++) {
             Rect a = rooms.get(i);
@@ -111,10 +117,12 @@ public class World {
             }
         }
 
+        // add the walls
         addWalls(tiles);
         return tiles;
     }
 
+    // carve an L-shaped corridor
     private static void carveLCorridor(TETile[][] tiles, int width, int height,
                                        int x0, int y0, int x1, int y1, Random r) {
         x0 = Math.max(1, Math.min(width - 2, x0));
@@ -132,6 +140,7 @@ public class World {
         }
     }
 
+    // carve a horizontal line
     private static void carveLineX(TETile[][] tiles, int x0, int x1, int y) {
         int sx = x0 <= x1 ? 1 : -1;
         for (int x = x0; x != x1 + sx; x += sx) {
@@ -139,6 +148,7 @@ public class World {
         }
     }
 
+    // carve a vertical line
     private static void carveLineY(TETile[][] tiles, int y0, int y1, int x) {
         int sy = y0 <= y1 ? 1 : -1;
         for (int y = y0; y != y1 + sy; y += sy) {
@@ -146,6 +156,7 @@ public class World {
         }
     }
 
+    // add the walls
     private static void addWalls(TETile[][] tiles) {
         int w = tiles.length;
         int h = tiles[0].length;
@@ -164,6 +175,7 @@ public class World {
                 }
             }
         }
+        // add the walls to the outer edges
         int maxX = w - 1, maxY = h - 1;
         for (int x = 0; x < w; x++) {
             if (tiles[x][0] == Tileset.FLOOR) tiles[x][0] = Tileset.WALL;
