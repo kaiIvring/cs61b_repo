@@ -38,8 +38,8 @@ public class AutograderBuddy {
         long seed = Long.parseLong(seedStr);
 
         // Choose a default canvas size; tests initialize renderer with tiles length/height
-        int width = 60;
-        int height = 40;
+        int width = 70;
+        int height = 60;
         return World.generateWorld(width, height, seed);
     }
 
