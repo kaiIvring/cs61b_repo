@@ -3,10 +3,7 @@ package core;
 import tileengine.TETile;
 import tileengine.Tileset;
 
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class World {
     // build your own world!
@@ -101,20 +98,53 @@ public class World {
             rooms.add(new Rect(rx, ry, rw, rh));
         }
 
-        // shuffle the rooms
-        Collections.shuffle(rooms, r);
-        for (int i = 1; i < rooms.size(); i++) {
-            Rect a = rooms.get(i);
-            Rect best = null;
-            int bestDist = Integer.MAX_VALUE;
-            for (int j = 0; j < i; j++) {
-                Rect b = rooms.get(j);
-                int d = Math.abs(a.cx() - b.cx()) + Math.abs(a.cy() - b.cy());
-                if (d < bestDist) { bestDist = d; best = b; }
+        // === Prim Minimum Spanning Tree Connection ===
+        int n = rooms.size();
+        int[][] dist = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int d = Math.abs(rooms.get(i).cx() - rooms.get(j).cx())
+                    + Math.abs(rooms.get(i).cy() - rooms.get(j).cy());
+                dist[i][j] = dist[j][i] = d;
             }
-            if (best != null) {
-                carveLCorridor(tiles, width, height, a.cx(), a.cy(), best.cx(), best.cy(), r);
+        }
+
+        // whether a room is in the tree
+        boolean[] inTree = new boolean[n];
+        // for every room that is not in the tree, the minimum distance to the tree
+        int[] minDist = new int[n];
+        // the parent of the room
+        int[] parent = new int[n];
+        // initialize the minimum distance to the tree to infinity
+        Arrays.fill(minDist, Integer.MAX_VALUE);
+
+        // build the MST using Prim's algorithm
+        minDist[0] = 0;
+        for (int k = 0; k < n; k++) {
+            int u = -1;
+            // find the room that is not in the tree and has the minimum distance to the tree
+            for (int i = 0; i < n; i++) {
+                if (!inTree[i] && (u == -1 || minDist[i] < minDist[u])) {
+                    u = i;
+                }
             }
+            // add the room to the tree
+            inTree[u] = true;
+            // update the minimum distance to the tree for the rooms that are not in the tree
+            for (int v = 0; v < n; v++) {
+                // use the previous room added to the tree to update the minimum distance to the tree
+                if (!inTree[v] && dist[u][v] < minDist[v]) {
+                    minDist[v] = dist[u][v];
+                    parent[v] = u;
+                }
+            }
+        }
+
+        // carve the corridors along the MST edges
+        for (int v = 1; v < n; v++) {
+            Rect a = rooms.get(v);
+            Rect b = rooms.get(parent[v]);
+            carveLCorridor(tiles, width, height, a.cx(), a.cy(), b.cx(), b.cy(), r);
         }
 
         // add the walls
@@ -122,23 +152,23 @@ public class World {
         return tiles;
     }
 
-    // carve an L-shaped corridor
-    private static void carveLCorridor(TETile[][] tiles, int width, int height,
-                                       int x0, int y0, int x1, int y1, Random r) {
-        x0 = Math.max(1, Math.min(width - 2, x0));
-        y0 = Math.max(1, Math.min(height - 2, y0));
-        x1 = Math.max(1, Math.min(width - 2, x1));
-        y1 = Math.max(1, Math.min(height - 2, y1));
+        // carve an L-shaped corridor
+        private static void carveLCorridor(TETile[][] tiles, int width, int height,
+                                        int x0, int y0, int x1, int y1, Random r) {
+            x0 = Math.max(1, Math.min(width - 2, x0));
+            y0 = Math.max(1, Math.min(height - 2, y0));
+            x1 = Math.max(1, Math.min(width - 2, x1));
+            y1 = Math.max(1, Math.min(height - 2, y1));
 
-        boolean horizontalFirst = r.nextBoolean();
-        if (horizontalFirst) {
-            carveLineX(tiles, x0, x1, y0);
-            carveLineY(tiles, y0, y1, x1);
-        } else {
-            carveLineY(tiles, y0, y1, x0);
-            carveLineX(tiles, x0, x1, y1);
+            boolean horizontalFirst = r.nextBoolean();
+            if (horizontalFirst) {
+                carveLineX(tiles, x0, x1, y0);
+                carveLineY(tiles, y0, y1, x1);
+            } else {
+                carveLineY(tiles, y0, y1, x0);
+                carveLineX(tiles, x0, x1, y1);
+            }
         }
-    }
 
     // carve a horizontal line
     private static void carveLineX(TETile[][] tiles, int x0, int x1, int y) {
