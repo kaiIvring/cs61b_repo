@@ -23,7 +23,7 @@ public class World {
         TETile[][] tiles = new TETile[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                tiles[x][y] = Tileset.NOTHING;
+                tiles[x][y] = Tileset.GROUND;
             }
         }
 
@@ -79,7 +79,7 @@ public class World {
             // fill the room with floors
             for (int x = rect.x; x < rect.x + rect.w; x++) {
                 for (int y = rect.y; y < rect.y + rect.h; y++) {
-                    tiles[x][y] = Tileset.FLOOR;
+                    tiles[x][y] = Tileset.FLOOR_TILE;
                 }
             }
         }
@@ -92,7 +92,7 @@ public class World {
             int ry = Math.max(1, (height - rh) / 2);
             for (int x = rx; x < rx + rw; x++) {
                 for (int y = ry; y < ry + rh; y++) {
-                    tiles[x][y] = Tileset.FLOOR;
+                    tiles[x][y] = Tileset.FLOOR_TILE;
                 }
             }
             rooms.add(new Rect(rx, ry, rw, rh));
@@ -152,29 +152,29 @@ public class World {
         return tiles;
     }
 
-        // carve an L-shaped corridor
-        private static void carveLCorridor(TETile[][] tiles, int width, int height,
-                                        int x0, int y0, int x1, int y1, Random r) {
-            x0 = Math.max(1, Math.min(width - 2, x0));
-            y0 = Math.max(1, Math.min(height - 2, y0));
-            x1 = Math.max(1, Math.min(width - 2, x1));
-            y1 = Math.max(1, Math.min(height - 2, y1));
+    // carve an L-shaped corridor
+    private static void carveLCorridor(TETile[][] tiles, int width, int height,
+                                    int x0, int y0, int x1, int y1, Random r) {
+        x0 = Math.max(1, Math.min(width - 2, x0));
+        y0 = Math.max(1, Math.min(height - 2, y0));
+        x1 = Math.max(1, Math.min(width - 2, x1));
+        y1 = Math.max(1, Math.min(height - 2, y1));
 
-            boolean horizontalFirst = r.nextBoolean();
-            if (horizontalFirst) {
-                carveLineX(tiles, x0, x1, y0);
-                carveLineY(tiles, y0, y1, x1);
-            } else {
-                carveLineY(tiles, y0, y1, x0);
-                carveLineX(tiles, x0, x1, y1);
-            }
+        boolean horizontalFirst = r.nextBoolean();
+        if (horizontalFirst) {
+            carveLineX(tiles, x0, x1, y0);
+            carveLineY(tiles, y0, y1, x1);
+        } else {
+            carveLineY(tiles, y0, y1, x0);
+            carveLineX(tiles, x0, x1, y1);
         }
+    }
 
     // carve a horizontal line
     private static void carveLineX(TETile[][] tiles, int x0, int x1, int y) {
         int sx = x0 <= x1 ? 1 : -1;
         for (int x = x0; x != x1 + sx; x += sx) {
-            tiles[x][y] = Tileset.FLOOR;
+            tiles[x][y] = Tileset.FLOOR_TILE;
         }
     }
 
@@ -182,7 +182,7 @@ public class World {
     private static void carveLineY(TETile[][] tiles, int y0, int y1, int x) {
         int sy = y0 <= y1 ? 1 : -1;
         for (int y = y0; y != y1 + sy; y += sy) {
-            tiles[x][y] = Tileset.FLOOR;
+            tiles[x][y] = Tileset.FLOOR_TILE;
         }
     }
 
@@ -192,13 +192,15 @@ public class World {
         int h = tiles[0].length;
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
-                if (tiles[x][y] == Tileset.FLOOR) {
+                if (tiles[x][y] == Tileset.FLOOR_TILE) {
                     for (int dx = -1; dx <= 1; dx++) {
                         for (int dy = -1; dy <= 1; dy++) {
                             int nx = x + dx, ny = y + dy;
-                            if (nx < 0 || nx >= w || ny < 0 || ny >= h) { continue; }
-                            if (tiles[nx][ny] == Tileset.NOTHING) {
-                                tiles[nx][ny] = Tileset.WALL;
+                            if (nx < 0 || nx >= w || ny < 0 || ny >= h) {
+                                continue;
+                            }
+                            if (tiles[nx][ny] == Tileset.GROUND) {
+                                tiles[nx][ny] = Tileset.WOOD_WALL;
                             }
                         }
                     }
@@ -208,12 +210,12 @@ public class World {
         // add the walls to the outer edges
         int maxX = w - 1, maxY = h - 1;
         for (int x = 0; x < w; x++) {
-            if (tiles[x][0] == Tileset.FLOOR) tiles[x][0] = Tileset.WALL;
-            if (tiles[x][maxY] == Tileset.FLOOR) tiles[x][maxY] = Tileset.WALL;
+            if (tiles[x][0] == Tileset.FLOOR_TILE) tiles[x][0] = Tileset.WOOD_WALL;
+            if (tiles[x][maxY] == Tileset.FLOOR_TILE) tiles[x][maxY] = Tileset.WOOD_WALL;
         }
         for (int y = 0; y < h; y++) {
-            if (tiles[0][y] == Tileset.FLOOR) tiles[0][y] = Tileset.WALL;
-            if (tiles[maxX][y] == Tileset.FLOOR) tiles[maxX][y] = Tileset.WALL;
+            if (tiles[0][y] == Tileset.FLOOR_TILE) tiles[0][y] = Tileset.WOOD_WALL;
+            if (tiles[maxX][y] == Tileset.FLOOR_TILE) tiles[maxX][y] = Tileset.WOOD_WALL;
         }
     }
 

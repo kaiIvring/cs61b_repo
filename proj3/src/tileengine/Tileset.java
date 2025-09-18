@@ -34,6 +34,12 @@ public class Tileset {
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree", 11);
 
     public static final TETile CELL = new TETile('█', Color.white, Color.black, "cell", 12);
+
+    public static final TETile WOOD_WALL = new TETile(' ', null, null, "wooden wall", "src/image/wood_wall.png", 13);
+    public static final TETile GROUND = new TETile(' ', null, null, "ground", "src/image/ground_tile.png", 14);
+    public static final TETile FLOOR_TILE = new TETile(' ', null, null, "floor", "src/image/floor.png", 15);
+    public static final TETile BRICK_WALL = new TETile(' ', null, null, "brick wall", "src/image/brick_wall.png", 16);
+
 }
 
 
