@@ -263,7 +263,7 @@ public class GamePlay {
             return;
         }
 
-        // Check if new position is valid (floor or empty space)
+        // Check if new position is valid (floor)
         if (isValidPosition(world, newX, newY)) {
             // Clear old position
             world[avatarX][avatarY] = Tileset.FLOOR_TILE;
@@ -275,12 +275,12 @@ public class GamePlay {
         }
     }
 
-    private static boolean isValidPosition(TETile[][] world, int x, int y) {
+    public static boolean isValidPosition(TETile[][] world, int x, int y) {
         if (x < 0 || x >= WINDOW_WIDTH || y < 0 || y >= WINDOW_HEIGHT) {
             return false;
         }
         TETile tile = world[x][y];
-        return tile == Tileset.FLOOR_TILE || tile == Tileset.NOTHING;
+        return tile == Tileset.FLOOR_TILE;
     }
 
     private static void placeAvatarOnFloor(TETile[][] world) {
@@ -301,7 +301,7 @@ public class GamePlay {
         world[avatarX][avatarY] = Tileset.AVATAR;
     }
 
-    private static void saveToFile(long seed, int x, int y) {
+    public static void saveToFile(long seed, int x, int y) {
         try {
             FileWriter writer = new FileWriter(SAVE_FILE);
             writer.write(seed + "\n");
@@ -313,7 +313,7 @@ public class GamePlay {
         }
     }
 
-    private static String[] loadFromFile() {
+    public static String[] loadFromFile() {
         try {
             if (!Files.exists(Paths.get(SAVE_FILE))) {
                 return null;
