@@ -13,7 +13,6 @@ public class AutograderBuddy {
     private static final int WINDOW_HEIGHT = 60;
     private static int avatarX = 0;
     private static int avatarY = 0;
-    private static final String SAVE_FILE = "src/save.txt";
 
     /**
      * Simulates a game, but doesn't render anything or call any StdDraw

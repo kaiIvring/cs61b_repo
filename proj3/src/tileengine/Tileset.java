@@ -41,5 +41,3 @@ public class Tileset {
     public static final TETile BRICK_WALL = new TETile('B', null, null, "brick wall", "src/image/brick_wall.png", 16);
 
 }
-
-

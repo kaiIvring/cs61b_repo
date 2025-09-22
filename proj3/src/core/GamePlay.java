@@ -18,6 +18,10 @@ public class GamePlay {
     private static int avatarX = 0;
     private static int avatarY = 0;
     private static final String SAVE_FILE = "src/save.txt";
+    
+    // Line of sight system
+    private static boolean lineOfSightEnabled = true;
+    private static final int SIGHT_RANGE = 8; // Maximum sight range
 
     public static void startNewWorld() {
         // Prompt user for seed input
@@ -143,8 +147,11 @@ public class GamePlay {
         boolean playing = true;
         boolean waitingForQ = false;
         while (playing) {
-            // Render the world
-            ter.renderFrame(world);
+            // Create visibility mask
+            boolean[][] visible = calculateLineOfSight(world, avatarX, avatarY);
+            
+            // Render the world with line of sight
+            renderWorldWithLOS(world, visible, ter);
 
             // Draw HUD overlay
             drawHUD(world, title);
@@ -172,6 +179,10 @@ public class GamePlay {
                             break;
                         case 'd':
                             moveAvatar(world, 1, 0);
+                            break;
+                        case 't':
+                            // Toggle line of sight
+                            lineOfSightEnabled = !lineOfSightEnabled;
                             break;
                         case ':':
                             // Wait for 'q' after ':'
@@ -210,7 +221,7 @@ public class GamePlay {
         
         // Draw controls
         StdDraw.setFont(new Font("Monaco", Font.PLAIN, 12));
-        StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT - 2, "WASD: Move | :Q: Save & Quit | ESC: Quit without saving");
+        StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT - 2, "WASD: Move | T: Toggle LOS | :Q: Save & Quit | ESC: Quit without saving");
         
         // Draw tile information at mouse position
         if (tileX >= 0 && tileX < WINDOW_WIDTH && tileY >= 0 && tileY < WINDOW_HEIGHT) {
@@ -230,6 +241,14 @@ public class GamePlay {
         StdDraw.setPenColor(Color.CYAN);
         StdDraw.setFont(new Font("Monaco", Font.PLAIN, 10));
         StdDraw.text(8.0, 1.5, "Avatar: (" + avatarX + ", " + avatarY + ")");
+        
+        // Draw line of sight status
+        StdDraw.setPenColor(new Color(0, 0, 0, 150));
+        StdDraw.filledRectangle(WINDOW_WIDTH - 8.0, 1.5, 8.0, 1.0);
+        StdDraw.setPenColor(lineOfSightEnabled ? Color.GREEN : Color.RED);
+        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 10));
+        StdDraw.text(WINDOW_WIDTH - 8.0, 1.5, "LOS: " + (lineOfSightEnabled ? "ON" : "OFF"));
+        StdDraw.text(WINDOW_WIDTH - 8.0, 1.0, "Press T to toggle");
         
         StdDraw.show();
     }
@@ -329,5 +348,86 @@ public class GamePlay {
             showError("Failed to load: " + e.getMessage());
         }
         return null;
+    }
+    
+    private static boolean[][] calculateLineOfSight(TETile[][] world, int avatarX, int avatarY) {
+        boolean[][] visible = new boolean[WINDOW_WIDTH][WINDOW_HEIGHT];
+        
+        if (!lineOfSightEnabled) {
+            // If line of sight is disabled, all tiles are visible
+            for (int x = 0; x < WINDOW_WIDTH; x++) {
+                for (int y = 0; y < WINDOW_HEIGHT; y++) {
+                    visible[x][y] = true;
+                }
+            }
+            return visible;
+        }
+        
+        // Avatar can always see its own position
+        visible[avatarX][avatarY] = true;
+        
+        // Cast rays in all directions
+        for (int angle = 0; angle < 360; angle += 2) {
+            castRay(world, visible, avatarX, avatarY, angle);
+        }
+        
+        return visible;
+    }
+    
+    private static void castRay(TETile[][] world, boolean[][] visible, int startX, int startY, double angle) {
+        double radians = Math.toRadians(angle);
+        double dx = Math.cos(radians);
+        double dy = Math.sin(radians);
+        
+        double x = startX + 0.5; // Start from center of tile
+        double y = startY + 0.5;
+        
+        for (int step = 0; step < SIGHT_RANGE * 2; step++) {
+            int tileX = (int) Math.floor(x);
+            int tileY = (int) Math.floor(y);
+            
+            // Check bounds
+            if (tileX < 0 || tileX >= WINDOW_WIDTH || tileY < 0 || tileY >= WINDOW_HEIGHT) {
+                break;
+            }
+            
+            // Mark this tile as visible
+            visible[tileX][tileY] = true;
+            
+            // Check if we hit a wall
+            if (world[tileX][tileY] == Tileset.WALL || 
+                world[tileX][tileY] == Tileset.BRICK_WALL || 
+                world[tileX][tileY] == Tileset.WOOD_WALL) {
+                break;
+            }
+            
+            // Move to next position
+            x += dx * 0.5;
+            y += dy * 0.5;
+        }
+    }
+    
+    private static void renderWorldWithLOS(TETile[][] world, boolean[][] visible, TERenderer ter) {
+        if (!lineOfSightEnabled) {
+            // If line of sight is disabled, render normally
+            ter.renderFrame(world);
+            return;
+        }
+        
+        // Create a copy of the world with hidden tiles replaced
+        TETile[][] visibleWorld = new TETile[WINDOW_WIDTH][WINDOW_HEIGHT];
+        
+        for (int x = 0; x < WINDOW_WIDTH; x++) {
+            for (int y = 0; y < WINDOW_HEIGHT; y++) {
+                if (visible[x][y]) {
+                    visibleWorld[x][y] = world[x][y];
+                } else {
+                    // Replace hidden tiles with darkness
+                    visibleWorld[x][y] = Tileset.NOTHING;
+                }
+            }
+        }
+        
+        ter.renderFrame(visibleWorld);
     }
 }

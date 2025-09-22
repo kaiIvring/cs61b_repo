@@ -6,8 +6,6 @@ import tileengine.Tileset;
 import java.util.*;
 
 public class World {
-    // build your own world!
-
     /**
      * Generates a pseudo-random world consisting of rectangular rooms and L-shaped hallways.
      * Floors and walls are visually distinct from empty space; no floors touch the outer border.
@@ -155,11 +153,13 @@ public class World {
     // carve an L-shaped corridor
     private static void carveLCorridor(TETile[][] tiles, int width, int height,
                                     int x0, int y0, int x1, int y1, Random r) {
+        // make sure 
         x0 = Math.max(1, Math.min(width - 2, x0));
         y0 = Math.max(1, Math.min(height - 2, y0));
         x1 = Math.max(1, Math.min(width - 2, x1));
         y1 = Math.max(1, Math.min(height - 2, y1));
 
+        // randomly choose to carve the corridor horizontally or vertically
         boolean horizontalFirst = r.nextBoolean();
         if (horizontalFirst) {
             carveLineX(tiles, x0, x1, y0);
