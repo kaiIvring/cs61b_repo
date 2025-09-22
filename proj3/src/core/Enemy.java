@@ -8,7 +8,7 @@ import java.util.*;
 public class Enemy {
     private static final int WINDOW_WIDTH = GameSettings.WINDOW_WIDTH;
     private static final int WINDOW_HEIGHT = GameSettings.WINDOW_HEIGHT;
-    private static final int MOVE_DELAY_FRAMES = 15; // enemy move delay
+    private static final int MOVE_DELAY_FRAMES = GameSettings.ENEMY_MOVE_DELAY_FRAMES; // enemy move delay
 
     int x, y;
     int targetX, targetY;
@@ -51,24 +51,6 @@ public class Enemy {
 
         // Place enemy in world
         world[pos[0]][pos[1]] = Tileset.ENEMY;
-    }
-
-    public static void loadEnemiesFromFile(String[] saveData, java.util.List<Enemy> enemies) {
-        enemies.clear();
-
-        if (saveData.length >= 4) {
-            try {
-                int numEnemies = Integer.parseInt(saveData[3]);
-                if (numEnemies > 0 && saveData.length >= 6) {
-                    int x = Integer.parseInt(saveData[4]);
-                    int y = Integer.parseInt(saveData[5]);
-                    enemies.add(new Enemy(x, y));
-                }
-            } catch (NumberFormatException e) {
-                // If parsing fails, initialize with default enemies
-                enemies.clear();
-            }
-        }
     }
 
     public static void updateEnemies(TETile[][] world, java.util.List<Enemy> enemies,int avatarX, int avatarY) {

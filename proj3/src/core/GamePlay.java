@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 
 public class GamePlay {
     private static final int WINDOW_WIDTH = GameSettings.WINDOW_WIDTH;
@@ -28,8 +29,32 @@ public class GamePlay {
     private static java.util.List<Enemy> enemies = new ArrayList<>();
     private static boolean playerCaught = false;
 
+    // Apple remain
+    private static int applesRemaining = 0;
+    private static List<int[]> apples = new ArrayList<>();
+
     public static void setPlayerCaught(boolean caught) {
         playerCaught = caught;
+    }
+
+    private static void placeApples(TETile[][] world, int count) {
+        apples.clear();
+        List<int[]> floorTiles = new ArrayList<>();
+        for (int x = 0; x < WINDOW_WIDTH; x++) {
+            for (int y = 0; y < WINDOW_HEIGHT; y++) {
+                if (isValidPosition(world, x, y)) {
+                    floorTiles.add(new int[]{x, y});
+                }
+            }
+        }
+        Collections.shuffle(floorTiles);
+        applesRemaining = count;
+
+        for (int i = 0; i < applesRemaining; i++) {
+            int[] pos = floorTiles.get(i);
+            world[pos[0]][pos[1]] = Tileset.APPLE;
+            apples.add(new int[]{pos[0], pos[1]});
+        }
     }
 
     static void startNewWorld() {
@@ -41,9 +66,10 @@ public class GamePlay {
 
         // Place avatar on first floor tile
         placeAvatarOnFloor(world);
-        
         // Initialize entities
         Enemy.initializeEnemies(world, enemies, avatarX, avatarY);
+        // place apples
+        placeApples(world, GameSettings.APPLE_NUMBER);
 
         // Display the world with avatar movement
         playWorld(world, seed, "New World Generated (Seed: " + seed + ")");
@@ -142,16 +168,43 @@ public class GamePlay {
             return;
         }
 
-        // Check if new position is valid (floor)
-        if (isValidPosition(world, newX, newY)) {
-            // Clear old position
-            world[avatarX][avatarY] = Tileset.FLOOR_TILE;
+        TETile tile = world[newX][newY];
 
-            // Move avatar
-            avatarX = newX;
-            avatarY = newY;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+        // check validation
+        if (tile != Tileset.FLOOR_TILE && tile != Tileset.APPLE && tile != Tileset.PATH) {
+            return;
         }
+
+        // check if the new position is apple
+        if (isApple(world, newX, newY)) {
+            // remove the apple from the apples List
+            Iterator<int[]> it = apples.iterator();
+            while (it.hasNext()) {
+                int[] pos = it.next();
+                if (pos[0] == newX && pos[1] == newY) {
+                    it.remove();
+                    break;
+                }
+            }
+
+            applesRemaining--;
+            if (applesRemaining <= 0) {
+                StdDraw.clear();
+                StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0,
+                        "You collected all apples! You win!");
+                StdDraw.show();
+                StdDraw.pause(4000);
+                System.exit(0);
+            }
+        }
+
+        // Clear old position
+        world[avatarX][avatarY] = Tileset.FLOOR_TILE;
+
+        // Move avatar
+        avatarX = newX;
+        avatarY = newY;
+        world[avatarX][avatarY] = Tileset.AVATAR;
     }
 
     private static void placeAvatarOnFloor(TETile[][] world) {
@@ -178,6 +231,11 @@ public class GamePlay {
         }
         TETile tile = world[x][y];
         return (tile == Tileset.FLOOR_TILE || tile == Tileset.PATH);
+    }
+
+    static boolean isApple(TETile[][] world, int x, int y) {
+        TETile tile = world[x][y];
+        return tile == Tileset.APPLE;
     }
 
     private static void renderWorldWithLOS(TETile[][] world, boolean[][] visible, TERenderer ter) {
@@ -278,13 +336,23 @@ public class GamePlay {
     static void saveToFile(long seed, int x, int y) {
         try {
             FileWriter writer = new FileWriter(SAVE_FILE);
+            //save world and avatar
             writer.write(seed + "\n");
             writer.write(x + "\n");
             writer.write(y + "\n");
+
+            // save enemy
             writer.write(enemies.size() + "\n"); // Save number of entities
             for (Enemy enemy : enemies) {
                 writer.write(enemy.x + "\n");
                 writer.write(enemy.y + "\n");
+            }
+
+            // save apples
+            writer.write(apples.size() + "\n");
+            for (int[] a : apples) {
+                writer.write(a[0] + "\n");
+                writer.write(a[1] + "\n");
             }
             writer.close();
         } catch (IOException e) {
@@ -319,9 +387,10 @@ public class GamePlay {
                 return;
             }
 
-            long seed = Long.parseLong(saveData[0]);
-            avatarX = Integer.parseInt(saveData[1]);
-            avatarY = Integer.parseInt(saveData[2]);
+            int idx = 0;
+            long seed = Long.parseLong(saveData[idx++]);
+            avatarX = Integer.parseInt(saveData[idx++]);
+            avatarY = Integer.parseInt(saveData[idx++]);
 
             // Generate the same world with the saved seed
             TETile[][] world = World.generateWorld(WINDOW_WIDTH, WINDOW_HEIGHT, seed);
@@ -333,16 +402,30 @@ public class GamePlay {
                 placeAvatarOnFloor(world);
             }
 
-            // Load entities from save file
-            Enemy.loadEnemiesFromFile(saveData, enemies);
-
-            // Place entities in world
-            for (Enemy enemy : enemies) {
-                if (isValidPosition(world, enemy.x, enemy.y)) {
-                    world[enemy.x][enemy.y] = Tileset.ENEMY;
+            // Load enemies from save file
+            enemies.clear();
+            int enemyCount = Integer.parseInt(saveData[idx++]);
+            for (int i = 0; i < enemyCount; i++) {
+                int ex = Integer.parseInt(saveData[idx++]);
+                int ey = Integer.parseInt(saveData[idx++]);
+                enemies.add(new Enemy(ex, ey));
+                if (isValidPosition(world, ex, ey)) {
+                    world[ex][ey] = Tileset.ENEMY;
                 }
             }
 
+            // Load apples from save file
+            apples.clear();
+            int appleCount = Integer.parseInt(saveData[idx++]);
+            for (int i = 0; i < appleCount; i++) {
+                int ax = Integer.parseInt(saveData[idx++]);
+                int ay = Integer.parseInt(saveData[idx++]);
+                apples.add(new int[]{ax, ay});
+                if (isValidPosition(world, ax, ay)) {
+                    world[ax][ay] = Tileset.APPLE;
+                }
+            }
+            applesRemaining = appleCount;
             // Display the world with avatar movement
             playWorld(world, seed, "Loaded World (Seed: " + seed + ")");
 
