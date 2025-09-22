@@ -57,8 +57,8 @@ public class HUD {
         StdDraw.filledRectangle(WINDOW_WIDTH - 8.0, 1.5, 8.0, 1.0);
         StdDraw.setPenColor(lineOfSightEnabled ? Color.GREEN : Color.RED);
         StdDraw.setFont(new Font("Monaco", Font.PLAIN, 10));
-        StdDraw.text(WINDOW_WIDTH - 8.0, 1.5, "LOS: " + (lineOfSightEnabled ? "ON" : "OFF"));
-        StdDraw.text(WINDOW_WIDTH - 8.0, 1.0, "Press T to toggle");
+        StdDraw.text(WINDOW_WIDTH - 8.0, 2.5, "LOS: " + (lineOfSightEnabled ? "ON" : "OFF"));
+        StdDraw.text(WINDOW_WIDTH - 8.0, 2.0, "Press T to toggle");
 
         // Draw path display status
         StdDraw.setPenColor(new Color(0, 0, 0, 150));

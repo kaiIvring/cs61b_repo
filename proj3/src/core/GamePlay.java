@@ -64,12 +64,12 @@ public class GamePlay {
             Enemy.updateEnemies(world, enemies, avatarX, avatarY);
 
             if (playerCaught) {
-                playerCaught = false;
+                playerCaught = false; //set playerCaught to false to prevent always ending game
                 StdDraw.clear();
                 StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, "Game Over! You were caught!");
                 StdDraw.show();
-                StdDraw.pause(3000); // 等待3秒显示游戏结束
-                playing = false; // 结束游戏循环
+                StdDraw.pause(3000); // wait 3 seconds to show game over
+                playing = false; // end game loop
                 continue;
             }
             
@@ -170,15 +170,6 @@ public class GamePlay {
         avatarX = WINDOW_WIDTH / 2;
         avatarY = WINDOW_HEIGHT / 2;
         world[avatarX][avatarY] = Tileset.AVATAR;
-    }
-
-    private static Boolean checkGameOver(TETile[][] world, java.util.List<Enemy> enemies) {
-        for (Enemy enemy : enemies) {
-            if (enemy.x == avatarX && enemy.y == avatarY) {
-                return true;
-            }
-        }
-        return false;
     }
 
      static boolean isValidPosition(TETile[][] world, int x, int y) {

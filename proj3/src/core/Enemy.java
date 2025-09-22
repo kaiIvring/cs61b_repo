@@ -8,10 +8,12 @@ import java.util.*;
 public class Enemy {
     private static final int WINDOW_WIDTH = GameSettings.WINDOW_WIDTH;
     private static final int WINDOW_HEIGHT = GameSettings.WINDOW_HEIGHT;
+    private static final int MOVE_DELAY_FRAMES = 15; // enemy move delay
 
     int x, y;
     int targetX, targetY;
     List<int[]> path;
+    private int moveCoolDown;
 
     public Enemy(int x, int y) {
         this.x = x;
@@ -19,6 +21,7 @@ public class Enemy {
         this.targetX = x;
         this.targetY = y;
         this.path = new ArrayList<>();
+        this.moveCoolDown = 0;
     }
 
     public static void initializeEnemies(TETile[][] world, java.util.List<Enemy> enemies, int avatarX, int avatarY) {
@@ -70,6 +73,7 @@ public class Enemy {
 
     public static void updateEnemies(TETile[][] world, java.util.List<Enemy> enemies,int avatarX, int avatarY) {
         for (Enemy enemy : enemies) {
+
             // Update target to avatar position
             enemy.targetX = avatarX;
             enemy.targetY = avatarY;
@@ -77,7 +81,15 @@ public class Enemy {
             // Calculate path to avatar using BFS
             enemy.path = findPath(world, enemy.x, enemy.y, enemy.targetX, enemy.targetY);
 
-            // Move entity along path
+            // enemy is still in cool down situation
+            // draw the enemy to the world but don't move it
+            if (enemy.moveCoolDown > 0) {
+                enemy.moveCoolDown--;
+                world[enemy.x][enemy.y] = Tileset.ENEMY;
+                continue;
+            }
+
+            // Move enemy along path
             if (!enemy.path.isEmpty()) {
                 int[] nextPos = enemy.path.get(0);
                 enemy.path.remove(0);
@@ -94,6 +106,8 @@ public class Enemy {
                     enemy.y = nextPos[1];
                 }
             }
+
+            enemy.moveCoolDown = MOVE_DELAY_FRAMES;
 
             // Always ensure enemy is displayed at its current position
             world[enemy.x][enemy.y] = Tileset.ENEMY;
