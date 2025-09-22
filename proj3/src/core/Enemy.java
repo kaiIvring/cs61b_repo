@@ -82,15 +82,13 @@ public class Enemy {
                 int[] nextPos = enemy.path.get(0);
                 enemy.path.remove(0);
 
-                // Check if next position is valid and not occupied by avatar
-                if (GamePlay.isValidPosition(world, nextPos[0], nextPos[1]) &&
-                        !(nextPos[0] == avatarX && nextPos[1] == avatarY)) {
-
+                if (nextPos[0] == avatarX && nextPos[1] == avatarY) {
+                    GamePlay.setPlayerCaught(true);
+                } else if (GamePlay.isValidPosition(world, nextPos[0], nextPos[1])) {
                     // Clear old position
                     if (world[enemy.x][enemy.y] == Tileset.ENEMY) {
                         world[enemy.x][enemy.y] = Tileset.FLOOR_TILE;
                     }
-
                     // Move to new position
                     enemy.x = nextPos[0];
                     enemy.y = nextPos[1];

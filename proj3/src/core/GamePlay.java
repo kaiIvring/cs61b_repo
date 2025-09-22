@@ -26,6 +26,11 @@ public class GamePlay {
     // Enemy system
     private static boolean showPaths = false;
     private static java.util.List<Enemy> enemies = new ArrayList<>();
+    private static boolean playerCaught = false;
+
+    public static void setPlayerCaught(boolean caught) {
+        playerCaught = caught;
+    }
 
     static void startNewWorld() {
         // Prompt user for seed input
@@ -57,6 +62,16 @@ public class GamePlay {
             
             // Update enEnemies
             Enemy.updateEnemies(world, enemies, avatarX, avatarY);
+
+            if (playerCaught) {
+                playerCaught = false;
+                StdDraw.clear();
+                StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, "Game Over! You were caught!");
+                StdDraw.show();
+                StdDraw.pause(3000); // 等待3秒显示游戏结束
+                playing = false; // 结束游戏循环
+                continue;
+            }
             
             // Draw entity paths if enabled
             if (showPaths) {
@@ -157,12 +172,21 @@ public class GamePlay {
         world[avatarX][avatarY] = Tileset.AVATAR;
     }
 
+    private static Boolean checkGameOver(TETile[][] world, java.util.List<Enemy> enemies) {
+        for (Enemy enemy : enemies) {
+            if (enemy.x == avatarX && enemy.y == avatarY) {
+                return true;
+            }
+        }
+        return false;
+    }
+
      static boolean isValidPosition(TETile[][] world, int x, int y) {
         if (x < 0 || x >= WINDOW_WIDTH || y < 0 || y >= WINDOW_HEIGHT) {
             return false;
         }
         TETile tile = world[x][y];
-        return tile == Tileset.FLOOR_TILE;
+        return (tile == Tileset.FLOOR_TILE || tile == Tileset.PATH);
     }
 
     private static void renderWorldWithLOS(TETile[][] world, boolean[][] visible, TERenderer ter) {
