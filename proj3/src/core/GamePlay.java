@@ -20,6 +20,7 @@ public class GamePlay {
     // Avatar position
     private static int avatarX = 0;
     private static int avatarY = 0;
+    private static boolean playing = false;
 
     // Line of sight system
     private static boolean lineOfSightEnabled = true;
@@ -80,7 +81,7 @@ public class GamePlay {
         TERenderer ter = new TERenderer();
         ter.initialize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        boolean playing = true;
+        playing = true;
         boolean waitingForQ = false;
         while (playing) {
             // Clear old paths from world
@@ -91,9 +92,7 @@ public class GamePlay {
 
             if (playerCaught) {
                 playerCaught = false; //set playerCaught to false to prevent always ending game
-                StdDraw.clear();
-                StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, "Game Over! You were caught!");
-                StdDraw.show();
+                HUD.showLoseMenu();
                 StdDraw.pause(3000); // wait 3 seconds to show game over
                 playing = false; // end game loop
                 continue;
@@ -111,7 +110,7 @@ public class GamePlay {
             renderWorldWithLOS(world, visible, ter);
 
             // Draw HUD overlay
-            HUD.drawHUD(world, title, lineOfSightEnabled, showPaths, avatarX, avatarY);
+            HUD.drawHUD(world, title, lineOfSightEnabled, showPaths, applesRemaining, avatarX, avatarY);
 
             // Handle key input
             if (StdDraw.hasNextKeyTyped()) {
@@ -189,12 +188,9 @@ public class GamePlay {
 
             applesRemaining--;
             if (applesRemaining <= 0) {
-                StdDraw.clear();
-                StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0,
-                        "You collected all apples! You win!");
-                StdDraw.show();
+                HUD.showWinMenu();
                 StdDraw.pause(4000);
-                System.exit(0);
+                playing = false;
             }
         }
 

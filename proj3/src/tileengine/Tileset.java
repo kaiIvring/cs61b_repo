@@ -42,7 +42,7 @@ public class Tileset {
     
     // Enemy and path tiles
     public static final TETile ENEMY = new TETile('E', Color.red, Color.black, "enemy", 17);
-    public static final TETile PATH = new TETile('*', new Color(255, 100, 100), Color.black, "path", 18);
+    public static final TETile PATH = new TETile('*', Color.red, Color.BLACK, "path", 18);
 
     public static final TETile APPLE = new TETile('A', Color.RED, Color.BLACK, "apple", 19);
 

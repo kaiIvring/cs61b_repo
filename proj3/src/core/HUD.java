@@ -8,7 +8,7 @@ import java.awt.*;
 public class HUD {
     private static final int WINDOW_WIDTH = GameSettings.WINDOW_WIDTH;
     private static final int WINDOW_HEIGHT = GameSettings.WINDOW_HEIGHT;
-    public static void drawHUD(TETile[][] world, String title, boolean lineOfSightEnabled, boolean showPaths,int avatarX, int avatarY) {
+    public static void drawHUD(TETile[][] world, String title, boolean lineOfSightEnabled, boolean showPaths, int applesRemaining, int avatarX, int avatarY) {
         // Get mouse position
         double mouseX = StdDraw.mouseX();
         double mouseY = StdDraw.mouseY();
@@ -47,25 +47,33 @@ public class HUD {
 
         // Draw avatar position info
         StdDraw.setPenColor(new Color(0, 0, 0, 150));
-        StdDraw.filledRectangle(8.0, 1.5, 8.0, 1.0);
+        StdDraw.filledRectangle(8.0, WINDOW_HEIGHT - 2.8, 8.0, 1.0);
         StdDraw.setPenColor(Color.CYAN);
-        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 10));
-        StdDraw.text(8.0, 1.5, "Avatar: (" + avatarX + ", " + avatarY + ")");
+        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 12));
+        StdDraw.text(8.0, WINDOW_HEIGHT - 3, "Avatar: (" + avatarX + ", " + avatarY + ")");
+
+        // Draw remain apples
+        StdDraw.setPenColor(new Color(0, 0, 0, 150));
+        StdDraw.filledRectangle(WINDOW_WIDTH - 8.0, WINDOW_HEIGHT - 2.8, 8.0, 1.0);
+
+        StdDraw.setPenColor(Color.GREEN);
+        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 12));
+        StdDraw.text(WINDOW_WIDTH - 8.0, WINDOW_HEIGHT - 3, "Apples left: " + applesRemaining);
 
         // Draw line of sight status
         StdDraw.setPenColor(new Color(0, 0, 0, 150));
-        StdDraw.filledRectangle(WINDOW_WIDTH - 8.0, 1.5, 8.0, 1.0);
+        StdDraw.filledRectangle(WINDOW_WIDTH - 8.0, 3.3, 8.0, 1.2);
         StdDraw.setPenColor(lineOfSightEnabled ? Color.YELLOW : Color.GRAY);
-        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 10));
-        StdDraw.text(WINDOW_WIDTH - 8.0, 3.5, "LOS: " + (lineOfSightEnabled ? "ON" : "OFF"));
+        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 12));
+        StdDraw.text(WINDOW_WIDTH - 8.0, 3.8, "LOS: " + (lineOfSightEnabled ? "ON" : "OFF"));
         StdDraw.text(WINDOW_WIDTH - 8.0, 3.0, "Press T to toggle");
 
         // Draw path display status
         StdDraw.setPenColor(new Color(0, 0, 0, 150));
-        StdDraw.filledRectangle(WINDOW_WIDTH - 8.0, 0.5, 8.0, 1.0);
+        StdDraw.filledRectangle(WINDOW_WIDTH - 8.0, 1.0, 8.0, 1.2);
         StdDraw.setPenColor(showPaths ? Color.YELLOW : Color.GRAY);
-        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 10));
-        StdDraw.text(WINDOW_WIDTH - 8.0, 1.5, "Paths: " + (showPaths ? "ON" : "OFF"));
+        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 12));
+        StdDraw.text(WINDOW_WIDTH - 8.0, 1.8, "Paths: " + (showPaths ? "ON" : "OFF"));
         StdDraw.text(WINDOW_WIDTH - 8.0, 1.0, "Press P to toggle");
 
         StdDraw.show();
@@ -89,5 +97,38 @@ public class HUD {
 
         // Add coordinates
         return description + " (" + x + ", " + y + ")";
+    }
+
+    static void showWinMenu() {
+        StdDraw.clear();
+        StdDraw.setPenColor(new Color(0, 0, 0, 180));
+        StdDraw.filledRectangle(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0,
+                WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
+
+        StdDraw.setPenColor(Color.GREEN);
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 40));
+        String msg = "YOU WIN!";
+        StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0 + 2, msg);
+
+        StdDraw.setPenColor(Color.YELLOW);
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 20));
+        StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, "All apples collected!");
+        StdDraw.show();
+    }
+
+    static void showLoseMenu() {
+        StdDraw.setPenColor(new Color(0, 0, 0, 180));
+        StdDraw.filledRectangle(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0,
+                WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
+
+        StdDraw.setPenColor(Color.RED);
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 40));
+        StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0 + 2, "GAME OVER");
+
+        StdDraw.setPenColor(Color.YELLOW);
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 20));
+        StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0, "You were caught by the enemy!");
+
+        StdDraw.show();
     }
 }
