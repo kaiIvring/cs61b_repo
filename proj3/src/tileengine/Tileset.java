@@ -39,5 +39,9 @@ public class Tileset {
     public static final TETile GROUND = new TETile('G', null, null, "ground", "src/image/ground_tile.png", 14);
     public static final TETile FLOOR_TILE = new TETile('F', null, null, "floor", "src/image/floor.png", 15);
     public static final TETile BRICK_WALL = new TETile('B', null, null, "brick wall", "src/image/brick_wall.png", 16);
+    
+    // Entity and path tiles
+    public static final TETile ENEMY = new TETile('E', Color.red, Color.black, "enemy", 17);
+    public static final TETile PATH = new TETile('*', new Color(255, 100, 100), Color.black, "path", 18);
 
 }

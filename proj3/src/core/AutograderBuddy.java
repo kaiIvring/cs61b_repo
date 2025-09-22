@@ -9,8 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class AutograderBuddy {
-    private static final int WINDOW_WIDTH = 70;
-    private static final int WINDOW_HEIGHT = 60;
+    private static final int WINDOW_WIDTH = GameSettings.WINDOW_WIDTH;
+    private static final int WINDOW_HEIGHT = GameSettings.WINDOW_HEIGHT;
     private static int avatarX = 0;
     private static int avatarY = 0;
 
@@ -165,7 +165,9 @@ public class AutograderBuddy {
         return t.character() == Tileset.FLOOR.character()
                 || t.character() == Tileset.AVATAR.character()
                 || t.character() == Tileset.FLOWER.character()
-                || t.character() == Tileset.FLOOR_TILE.character();
+                || t.character() == Tileset.FLOOR_TILE.character()
+                || t.character() == Tileset.ENEMY.character()
+                || t.character() == Tileset.PATH.character();
     }
 
     /**

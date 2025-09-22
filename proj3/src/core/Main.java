@@ -6,8 +6,8 @@ import java.awt.Color;
 import java.awt.Font;
 
 public class Main {
-    private static final int WINDOW_WIDTH = 60;
-    private static final int WINDOW_HEIGHT = 40;
+    private static final int WINDOW_WIDTH = GameSettings.WINDOW_WIDTH;
+    private static final int WINDOW_HEIGHT = GameSettings.WINDOW_HEIGHT;
     public static void main(String[] args) {
         // Show main menu
         // Initialize StdDraw
