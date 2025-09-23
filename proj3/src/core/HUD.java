@@ -100,7 +100,6 @@ public class HUD {
     }
 
     static void showWinMenu() {
-        StdDraw.clear();
         StdDraw.setPenColor(new Color(0, 0, 0, 180));
         StdDraw.filledRectangle(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0,
                 WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);

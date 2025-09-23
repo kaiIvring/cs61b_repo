@@ -200,7 +200,7 @@ public class World {
                                 continue;
                             }
                             if (tiles[nx][ny] == Tileset.GROUND) {
-                                tiles[nx][ny] = Tileset.WOOD_WALL;
+                                tiles[nx][ny] = Tileset.WALL;
                             }
                         }
                     }
@@ -210,12 +210,12 @@ public class World {
         // add the walls to the outer edges
         int maxX = w - 1, maxY = h - 1;
         for (int x = 0; x < w; x++) {
-            if (tiles[x][0] == Tileset.FLOOR_TILE) tiles[x][0] = Tileset.WOOD_WALL;
-            if (tiles[x][maxY] == Tileset.FLOOR_TILE) tiles[x][maxY] = Tileset.WOOD_WALL;
+            if (tiles[x][0] == Tileset.FLOOR_TILE) tiles[x][0] = Tileset.WALL;
+            if (tiles[x][maxY] == Tileset.FLOOR_TILE) tiles[x][maxY] = Tileset.WALL;
         }
         for (int y = 0; y < h; y++) {
-            if (tiles[0][y] == Tileset.FLOOR_TILE) tiles[0][y] = Tileset.WOOD_WALL;
-            if (tiles[maxX][y] == Tileset.FLOOR_TILE) tiles[maxX][y] = Tileset.WOOD_WALL;
+            if (tiles[0][y] == Tileset.FLOOR_TILE) tiles[0][y] = Tileset.WALL;
+            if (tiles[maxX][y] == Tileset.FLOOR_TILE) tiles[maxX][y] = Tileset.WALL;
         }
     }
 
