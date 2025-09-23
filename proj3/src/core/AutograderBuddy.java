@@ -167,7 +167,8 @@ public class AutograderBuddy {
                 || t.character() == Tileset.FLOWER.character()
                 || t.character() == Tileset.FLOOR_TILE.character()
                 || t.character() == Tileset.ENEMY.character()
-                || t.character() == Tileset.PATH.character();
+                || t.character() == Tileset.PATH.character()
+                || t.character() == Tileset.APPLE.character();
     }
 
     /**

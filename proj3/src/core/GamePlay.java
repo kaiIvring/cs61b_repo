@@ -73,7 +73,7 @@ public class GamePlay {
         placeApples(world, GameSettings.APPLE_NUMBER);
 
         // Display the world with avatar movement
-        playWorld(world, seed, "New World Generated (Seed: " + seed + ")");
+        playWorld(world, seed, "Echo Orchard (Seed: " + seed + ")");
     }
 
 
@@ -92,7 +92,7 @@ public class GamePlay {
 
             if (playerCaught) {
                 playerCaught = false; //set playerCaught to false to prevent always ending game
-                HUD.showLoseMenu();
+                HUD.showLoseMessage();
                 StdDraw.pause(3000); // wait 3 seconds to show game over
                 playing = false; // end game loop
                 continue;
@@ -188,7 +188,7 @@ public class GamePlay {
 
             applesRemaining--;
             if (applesRemaining <= 0) {
-                HUD.showWinMenu();
+                HUD.showWinMessage();
                 StdDraw.pause(4000);
                 playing = false;
             }
@@ -423,7 +423,7 @@ public class GamePlay {
             }
             applesRemaining = appleCount;
             // Display the world with avatar movement
-            playWorld(world, seed, "Loaded World (Seed: " + seed + ")");
+            playWorld(world, seed, "Echo Orchard (Seed: " + seed + ")");
 
         } catch (Exception e) {
             showError("Failed to load save file: " + e.getMessage());

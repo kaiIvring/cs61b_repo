@@ -99,7 +99,7 @@ public class HUD {
         return description + " (" + x + ", " + y + ")";
     }
 
-    static void showWinMenu() {
+    static void showWinMessage() {
         StdDraw.setPenColor(new Color(0, 0, 0, 180));
         StdDraw.filledRectangle(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0,
                 WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
@@ -115,7 +115,7 @@ public class HUD {
         StdDraw.show();
     }
 
-    static void showLoseMenu() {
+    static void showLoseMessage() {
         StdDraw.setPenColor(new Color(0, 0, 0, 180));
         StdDraw.filledRectangle(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0,
                 WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);

@@ -24,17 +24,13 @@ public class Main {
             StdDraw.setPenColor(Color.WHITE);
             StdDraw.setFont(new Font("Monaco", Font.BOLD, 30));
             StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT * 0.8, "CS61B Proj3");
-            StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT * 0.75, "World Generator");
+            StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT * 0.75, "Echo Orchard");
 
             // Draw menu options
             StdDraw.setFont(new Font("Monaco", Font.BOLD, 20));
             StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT * 0.5, "N - New World");
             StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT * 0.4, "L - Load World");
             StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT * 0.3, "Q - Quit");
-
-            // Draw instructions
-            StdDraw.setFont(new Font("Monaco", Font.PLAIN, 12));
-            StdDraw.text(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT * 0.15, "Press a key to select an option");
 
             StdDraw.show();
 
