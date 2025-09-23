@@ -53,7 +53,7 @@ public class Enemy {
         world[pos[0]][pos[1]] = Tileset.ENEMY;
     }
 
-    public static void updateEnemies(TETile[][] world, java.util.List<Enemy> enemies,int avatarX, int avatarY) {
+    public static void updateEnemies(TETile[][] world, java.util.List<Enemy> enemies, List<int[]> apples, int avatarX, int avatarY) {
         for (Enemy enemy : enemies) {
 
             // Update target to avatar position
@@ -78,10 +78,19 @@ public class Enemy {
 
                 if (nextPos[0] == avatarX && nextPos[1] == avatarY) {
                     GamePlay.setPlayerCaught(true);
-                } else if (GamePlay.isValidPosition(world, nextPos[0], nextPos[1])) {
+                } else if (GamePlay.isValidPosition(world, nextPos[0], nextPos[1])
+                        || GamePlay.isApple(world, nextPos[0], nextPos[1])) {
                     // Clear old position
                     if (world[enemy.x][enemy.y] == Tileset.ENEMY) {
-                        world[enemy.x][enemy.y] = Tileset.FLOOR_TILE;
+                        // if old position was apple, replace the old position with apple
+                        boolean wasApple = false;
+                        for (int[] apple : apples) {
+                            if (apple[0] == enemy.x && apple[1] == enemy.y) {
+                                wasApple = true;
+                                break;
+                            }
+                        }
+                        world[enemy.x][enemy.y] = wasApple ? Tileset.APPLE : Tileset.FLOOR_TILE;
                     }
                     // Move to new position
                     enemy.x = nextPos[0];
@@ -134,9 +143,6 @@ public class Enemy {
                     path.add(0, new int[]{px, py});
                     int[] par = parent.get(key);
                     key = par[0] + "," + par[1];
-//                    int[] pos = parent.get(key);
-//                    path.add(0, pos);
-//                    key = pos[0] + "," + pos[1];
                 }
                 return path;
             }
@@ -146,7 +152,9 @@ public class Enemy {
                 int newY = y + dir[1];
                 String newKey = newX + "," + newY;
 
-                if ((newX == targetX && newY == targetY || GamePlay.isValidPosition(world, newX, newY)) && !visited.contains(newKey)) {
+                // the enemy can reach apple
+                if ((newX == targetX && newY == targetY || GamePlay.isValidPosition(world, newX, newY) || GamePlay.isApple(world, newX, newY))
+                        && !visited.contains(newKey)) {
                     visited.add(newKey);
                     queue.offer(new int[]{newX, newY});
                     parent.put(newKey, new int[]{x, y});

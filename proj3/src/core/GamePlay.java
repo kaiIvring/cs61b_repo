@@ -88,7 +88,7 @@ public class GamePlay {
             Enemy.clearPaths(world);
             
             // Update enEnemies
-            Enemy.updateEnemies(world, enemies, avatarX, avatarY);
+            Enemy.updateEnemies(world, enemies, apples, avatarX, avatarY);
 
             if (playerCaught) {
                 playerCaught = false; //set playerCaught to false to prevent always ending game
