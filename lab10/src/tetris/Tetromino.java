@@ -61,7 +61,7 @@ public enum Tetromino {
         this.shape = ijToXY(s);
         this.width = shape[0].length;
         this.height = shape.length;
-        this.pos = new Point(3, 20);
+        this.pos = new Point(Tetris.getBoardWidth() / 2, Tetris.getBoardHeight());
     }
 
     /** Converts from ij coordinates to xy coordinates. This is specifically for converting
@@ -99,7 +99,7 @@ public enum Tetromino {
      * Sets the point of a Tetromino to (3, 20), specifically for spawning.
      */
     public void reset() {
-        this.pos = new Point(3, 20);
+        this.pos = new Point(Tetris.getBoardWidth() / 2, Tetris.getBoardHeight());
     }
 
 }

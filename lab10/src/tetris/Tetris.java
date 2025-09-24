@@ -5,6 +5,7 @@ import tileengine.TETile;
 import tileengine.TERenderer;
 import tileengine.Tileset;
 
+import java.awt.*;
 import java.util.*;
 
 /**
@@ -15,12 +16,20 @@ import java.util.*;
 
 public class Tetris {
 
-    private static int WIDTH = 10;
-    private static int HEIGHT = 20;
+    private static int WIDTH = 15;
+    private static int HEIGHT = 25;
+
+    public static int getBoardHeight() {
+        return HEIGHT;
+    }
+
+    public static int getBoardWidth() {
+        return WIDTH;
+    }
 
     // Tetrominoes spawn above the area we display, so we'll have our Tetris board have a
     // greater height than what is displayed.
-    private static int GAME_HEIGHT = 25;
+    private static int GAME_HEIGHT = 30;
 
     // Contains the tiles for the board.
     private TETile[][] board;
@@ -66,9 +75,11 @@ public class Tetris {
      * is filled and the new piece cannot be spawned.
      */
     private void spawnPiece() {
-        // The game ends if this tile is filled
-        if (board[4][19] != Tileset.NOTHING) {
-            isGameOver = true;
+        // The game ends if one of the top row tile is filled and currentTetromino is null
+        for (int x = 0; x < board.length; x++) {
+            if (board[x][HEIGHT] != Tileset.NOTHING && currentTetromino == null) {
+                isGameOver = true;
+            }
         }
 
         // Otherwise, spawn a new piece and set its position to the spawn point
@@ -90,8 +101,6 @@ public class Tetris {
             return;
         }
 
-        // TODO: Implement interactivity, so the user is able to input the keystrokes to move
-        //  the tile and rotate the tile. You'll want to use some provided helper methods here.
         // a, s, d: move, q, e: rotate
         if (StdDraw.hasNextKeyTyped()) {
             char KeyTyped = StdDraw.nextKeyTyped();
@@ -125,7 +134,6 @@ public class Tetris {
      * @param linesCleared
      */
     private void incrementScore(int linesCleared) {
-        // TODO: Increment the score based on the number of lines cleared.
         int ScoreIncrement = 0;
         switch (linesCleared) {
             case 1:
@@ -159,7 +167,6 @@ public class Tetris {
         int width = tiles.length;
         int height = tiles[0].length;
 
-        // TODO: Check how many lines have been completed and clear it the rows if completed.
         for (int y = 0; y < height; y++) {
             boolean full = true;
             for (int x = 0; x < width; x++) {
@@ -190,7 +197,6 @@ public class Tetris {
             }
         }
 
-        // TODO: Increment the score based on the number of lines cleared.
         incrementScore(linesCleared);
 
         fillAux();
@@ -203,18 +209,42 @@ public class Tetris {
     public void runGame() {
         resetActionTimer();
 
-        // TODO: Set up your game loop. The game should keep running until the game is over.
-        // Use helper methods inside your game loop, according to the spec description.
+        while (!isGameOver) {
+            renderBoard();
+            if (currentTetromino == null) {
+                clearLines(board);
+                spawnPiece();
+            }
+            updateBoard();
+        }
 
+        // draw game over message
+        StdDraw.setPenColor(new Color(0, 0, 0, 180));
+        StdDraw.filledRectangle(WIDTH / 2.0, HEIGHT / 2.0,
+                WIDTH / 2.0, HEIGHT / 2.0);
 
+        StdDraw.setPenColor(Color.RED);
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 20));
+        StdDraw.text(WIDTH / 2.0, HEIGHT / 2.0 + 2, "GAME OVER");
+
+        StdDraw.setPenColor(Color.YELLOW);
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 10));
+        StdDraw.text(WIDTH / 2.0, HEIGHT / 2.0, "Your Score: " + score);
+
+        StdDraw.show();
+        StdDraw.pause(3000);
+        System.exit(0);
     }
 
     /**
      * Renders the score using the StdDraw library.
      */
     private void renderScore() {
-        // TODO: Use the StdDraw library to draw out the score.
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 16));
+        StdDraw.text(WIDTH - 3, HEIGHT - 1, "Score: " + score);
 
+        StdDraw.show();
     }
 
     /**
