@@ -111,6 +111,8 @@ public class Tetris {
                 case 'e':
                     movement.rotateRight();
                     break;
+                default:
+                    break;
             }
         }
 
@@ -124,6 +126,25 @@ public class Tetris {
      */
     private void incrementScore(int linesCleared) {
         // TODO: Increment the score based on the number of lines cleared.
+        int ScoreIncrement = 0;
+        switch (linesCleared) {
+            case 1:
+                ScoreIncrement = 100;
+                break;
+            case 2:
+                ScoreIncrement = 300;
+                break;
+            case 3:
+                ScoreIncrement = 500;
+                break;
+            case 4:
+                ScoreIncrement = 800;
+                break;
+            default:
+                break;
+        }
+
+        score = score + ScoreIncrement;
 
     }
 
@@ -137,8 +158,20 @@ public class Tetris {
         int linesCleared = 0;
 
         // TODO: Check how many lines have been completed and clear it the rows if completed.
+        for (int i = 0; i < tiles.length; i++) {
+            int checklines = 0;
+            for (int j = 0; j < tiles[0].length; j++) {
+                if (tiles[i][j] != Tileset.NOTHING) {
+                    checklines++;
+                }
+            }
+            if (checklines == tiles[0].length) {
+                linesCleared++;
+            }
+        }
 
         // TODO: Increment the score based on the number of lines cleared.
+        incrementScore(linesCleared);
 
         fillAux();
     }
