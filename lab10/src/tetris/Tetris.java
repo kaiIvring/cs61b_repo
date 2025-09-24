@@ -156,17 +156,37 @@ public class Tetris {
     public void clearLines(TETile[][] tiles) {
         // Keeps track of the current number lines cleared
         int linesCleared = 0;
+        int width = tiles.length;
+        int height = tiles[0].length;
 
         // TODO: Check how many lines have been completed and clear it the rows if completed.
-        for (int i = 0; i < tiles.length; i++) {
-            int checklines = 0;
-            for (int j = 0; j < tiles[0].length; j++) {
-                if (tiles[i][j] != Tileset.NOTHING) {
-                    checklines++;
+        for (int y = 0; y < height; y++) {
+            boolean full = true;
+            for (int x = 0; x < width; x++) {
+                if (tiles[x][y] == Tileset.NOTHING) {
+                    full = false;
+                    break;
                 }
             }
-            if (checklines == tiles[0].length) {
+
+            // find a complete row
+            if (full) {
                 linesCleared++;
+
+                // move every row above down by one tile
+                for (int ny = y; ny < height - 1; ny++) {
+                    for (int x = 0; x < width; x++) {
+                        tiles[x][ny] = tiles[x][ny + 1];
+                    }
+                }
+
+                // leave the top row nothing
+                for (int x = 0; x < width; x++) {
+                    tiles[x][height - 1] = Tileset.NOTHING;
+                }
+
+                // check the same row again
+                y--;
             }
         }
 
